@@ -76,7 +76,7 @@ namespace MenuOption {
     const QString CrashNewFaultThreaded = "New Fault (threaded)";
     const QString DeadlockInterface = "Deadlock Interface";
     const QString DecreaseAvatarSize = "Decrease Avatar Size";
-	const QString DecreaseAvatarSpeed = "Decrease Avatar Speed";
+    const QString DecreaseAvatarSpeed = "Decrease Avatar Speed";
     const QString DefaultSkybox = "Default Skybox";
     const QString DeleteAvatarBookmark = "Delete Avatar Bookmark...";
     const QString DeleteBookmark = "Delete Bookmark...";

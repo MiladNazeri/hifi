@@ -167,26 +167,26 @@ Menu::Menu() {
             QString("../../hifi/tablet/TabletAttachmentsDialog.qml"), "AttachmentsDialog");
     });
 
-	// Avatar > Speed
-	MenuWrapper* avatarSpeedMenu = avatarMenu->addMenu("Speed");
+    // Avatar > Speed
+    MenuWrapper* avatarSpeedMenu = avatarMenu->addMenu("Speed");
 
-	// Avatar > Speed > Increase
-	addActionToQMenuAndActionHash(avatarSpeedMenu,
-		MenuOption::IncreaseAvatarSpeed,
-		0,
-		avatar.get(), SLOT(increaseSpeed()));
+    // Avatar > Speed > Increase
+    addActionToQMenuAndActionHash(avatarSpeedMenu,
+        MenuOption::IncreaseAvatarSpeed,
+        0,
+        avatar.get(), SLOT(increaseSpeed()));
 
-	// Avatar > Speed > Decrease
-	addActionToQMenuAndActionHash(avatarSpeedMenu,
-		MenuOption::DecreaseAvatarSpeed,
-		0,
-		avatar.get(), SLOT(decreaseSpeed()));
+    // Avatar > Speed > Decrease
+    addActionToQMenuAndActionHash(avatarSpeedMenu,
+        MenuOption::DecreaseAvatarSpeed,
+        0,
+        avatar.get(), SLOT(decreaseSpeed()));
 
 	// Avatar > Speed > Reset
-	addActionToQMenuAndActionHash(avatarSpeedMenu,
-		MenuOption::ResetAvatarSpeed,
-		0,
-		avatar.get(), SLOT(resetSpeed()));
+    addActionToQMenuAndActionHash(avatarSpeedMenu,
+        MenuOption::ResetAvatarSpeed,
+        0,
+        avatar.get(), SLOT(resetSpeed()));
 
     // Avatar > Size
     MenuWrapper* avatarSizeMenu = avatarMenu->addMenu("Size");

@@ -707,7 +707,7 @@ protected:
     virtual void maybeUpdateSessionDisplayNameFromTransport(const QString& sessionDisplayName) { } // No-op in AvatarMixer
 
 	// Body speed
-	float _speed;
+    float _speed;
 
     // Body scale
     float _targetScale;
