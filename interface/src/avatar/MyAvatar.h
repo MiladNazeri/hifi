@@ -553,6 +553,9 @@ public:
 
 
 public slots:
+	void increaseSpeed();
+	void decreaseSpeed();
+	void resetSpeed();
     void increaseSize();
     void decreaseSize();
     void resetSize();

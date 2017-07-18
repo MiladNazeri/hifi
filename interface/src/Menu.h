@@ -76,6 +76,7 @@ namespace MenuOption {
     const QString CrashNewFaultThreaded = "New Fault (threaded)";
     const QString DeadlockInterface = "Deadlock Interface";
     const QString DecreaseAvatarSize = "Decrease Avatar Size";
+	const QString DecreaseAvatarSpeed = "Decrease Avatar Speed";
     const QString DefaultSkybox = "Default Skybox";
     const QString DeleteAvatarBookmark = "Delete Avatar Bookmark...";
     const QString DeleteBookmark = "Delete Bookmark...";
@@ -113,6 +114,7 @@ namespace MenuOption {
     const QString FullscreenMirror = "Mirror";
     const QString Help = "Help...";
     const QString IncreaseAvatarSize = "Increase Avatar Size";
+	const QString IncreaseAvatarSpeed = "Increase Avatar Speed";
     const QString IndependentMode = "Independent Mode";
     const QString ActionMotorControl = "Enable Default Motor Control";
     const QString LoadScript = "Open and Run Script File...";
@@ -163,6 +165,7 @@ namespace MenuOption {
     const QString RenderIKConstraints = "Show IK Constraints";
     const QString RenderIKChains = "Show IK Chains";
     const QString ResetAvatarSize = "Reset Avatar Size";
+	const QString ResetAvatarSpeed = "Reset Avatar Speed";
     const QString ResetSensors = "Reset Sensors";
     const QString RunningScripts = "Running Scripts...";
     const QString RunClientScriptTests = "Run Client Script Tests";

@@ -706,6 +706,9 @@ protected:
     virtual const QString& getSessionDisplayNameForTransport() const { return _sessionDisplayName; }
     virtual void maybeUpdateSessionDisplayNameFromTransport(const QString& sessionDisplayName) { } // No-op in AvatarMixer
 
+	// Body speed
+	float _speed;
+
     // Body scale
     float _targetScale;
     float _domainMinimumScale { MIN_AVATAR_SCALE };

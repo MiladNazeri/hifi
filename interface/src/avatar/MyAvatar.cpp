@@ -929,6 +929,7 @@ void MyAvatar::saveData() {
     settings.setValue("headPitch", getHead()->getBasePitch());
 
     settings.setValue("scale", _targetScale);
+	settings.setValue("speed", _speed);
 
     // only save the fullAvatarURL if it has not been overwritten on command line
     // (so the overrideURL is not valid), or it was overridden _and_ we specified
@@ -1077,6 +1078,8 @@ void MyAvatar::loadData() {
 
     _targetScale = loadSetting(settings, "scale", 1.0f);
     setScale(glm::vec3(_targetScale));
+
+	_speed = loadSetting(settings, "speed", MAX_WALKING_SPEED);
 
     _prefOverrideAnimGraphUrl.set(QUrl(settings.value("animGraphURL", "").toString()));
     _fullAvatarURLFromPreferences = settings.value("fullAvatarURL", AvatarData::defaultFullAvatarModelUrl()).toUrl();
@@ -2097,7 +2100,7 @@ void MyAvatar::updateActionMotor(float deltaTime) {
         _actionMotorVelocity = motorSpeed * direction;
     } else {
         // we're interacting with a floor --> simple horizontal speed and exponential decay
-        _actionMotorVelocity = MAX_WALKING_SPEED * direction;
+        _actionMotorVelocity = _speed * direction;
     }
 
     float boomChange = getDriveKey(ZOOM);
@@ -2233,6 +2236,21 @@ float MyAvatar::getDomainMinScale() {
 
 float MyAvatar::getDomainMaxScale() {
     return _domainMaximumScale;
+}
+
+void MyAvatar::increaseSpeed() {
+	_speed = _speed + 2.0f;
+	qCDebug(interfaceapp, "Changed Speed to %f", (double)_speed);
+}
+
+void MyAvatar::decreaseSpeed() {
+	_speed = _speed -2.0f > 0 ? _speed - 2.0f : 1.0f;
+	qCDebug(interfaceapp, "Changed Speed to %f", (double)_speed);
+}
+
+void MyAvatar::resetSpeed() {
+	_speed = MAX_WALKING_SPEED;
+	qCDebug(interfaceapp, "Changed Speed to %f", (double)_speed);
 }
 
 void MyAvatar::increaseSize() {
