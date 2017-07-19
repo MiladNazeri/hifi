@@ -173,20 +173,19 @@ Menu::Menu() {
     // Avatar > Speed > Increase
     addActionToQMenuAndActionHash(avatarSpeedMenu,
         MenuOption::IncreaseAvatarSpeed,
-        0,
+        0, // QML Qt::Key_BracketRight,
         avatar.get(), SLOT(increaseSpeed()));
 
     // Avatar > Speed > Decrease
     addActionToQMenuAndActionHash(avatarSpeedMenu,
         MenuOption::DecreaseAvatarSpeed,
-        0,
+        0, // QML Qt::Key_BracketLeft,
         avatar.get(), SLOT(decreaseSpeed()));
 
 	// Avatar > Speed > Reset
     addActionToQMenuAndActionHash(avatarSpeedMenu,
         MenuOption::ResetAvatarSpeed,
-        0,
-        avatar.get(), SLOT(resetSpeed()));
+        0, avatar.get(), SLOT(resetSpeed()));
 
     // Avatar > Size
     MenuWrapper* avatarSizeMenu = avatarMenu->addMenu("Size");

@@ -64,8 +64,8 @@ using namespace std;
 
 const float DEFAULT_REAL_WORLD_FIELD_OF_VIEW_DEGREES = 30.0f;
 
-const float MAX_WALKING_SPEED = 2.6f; // human walking speed
-const float MAX_BOOST_SPEED = 0.5f * MAX_WALKING_SPEED; // action motor gets additive boost below this speed
+const float HUMAN_WALKING_SPEED = 2.6f;
+const float MAX_BOOST_SPEED = 0.5f * HUMAN_WALKING_SPEED; // action motor gets additive boost below this speed
 const float MIN_AVATAR_SPEED = 0.05f;
 const float MIN_AVATAR_SPEED_SQUARED = MIN_AVATAR_SPEED * MIN_AVATAR_SPEED; // speed is set to zero below this
 
@@ -929,7 +929,6 @@ void MyAvatar::saveData() {
     settings.setValue("headPitch", getHead()->getBasePitch());
 
     settings.setValue("scale", _targetScale);
-    settings.setValue("speed", _speed);
 
     // only save the fullAvatarURL if it has not been overwritten on command line
     // (so the overrideURL is not valid), or it was overridden _and_ we specified
@@ -2095,7 +2094,7 @@ void MyAvatar::updateActionMotor(float deltaTime) {
         _actionMotorVelocity = motorSpeed * direction;
     } else {
         // we're interacting with a floor --> simple horizontal speed and exponential decay
-        _actionMotorVelocity = _speed * direction;
+        _actionMotorVelocity = _walkSpeed * direction;
     }
 
     float boomChange = getDriveKey(ZOOM);
@@ -2234,18 +2233,18 @@ float MyAvatar::getDomainMaxScale() {
 }
 
 void MyAvatar::increaseSpeed() {
-    _speed = _speed + 2.0f;
-    qCDebug(interfaceapp, "Changed Speed to %f", (double)_speed);
+    _walkSpeed = _walkSpeed + 2.0f < MAX_AVATAR_SPEED ? _walkSpeed + 2.0f : MAX_AVATAR_SPEED;
+    qCDebug(interfaceapp, "Changed Speed to %f", (double)_walkSpeed);
 }
 
 void MyAvatar::decreaseSpeed() {
-    _speed = _speed -2.0f > 0 ? _speed - 2.0f : 1.0f;
-    qCDebug(interfaceapp, "Changed Speed to %f", (double)_speed);
+    _walkSpeed = _walkSpeed - 2.0f > DEFAULT_WALKING_SPEED ? _walkSpeed - 2.0f : DEFAULT_WALKING_SPEED;
+    qCDebug(interfaceapp, "Changed Speed to %f", (double)_walkSpeed);
 }
 
 void MyAvatar::resetSpeed() {
-    _speed = MAX_WALKING_SPEED;
-    qCDebug(interfaceapp, "Changed Speed to %f", (double)_speed);
+    _walkSpeed = DEFAULT_WALKING_SPEED;
+    qCDebug(interfaceapp, "Changed Speed to %f", (double)_walkSpeed);
 }
 
 void MyAvatar::increaseSize() {
