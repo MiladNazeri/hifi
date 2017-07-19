@@ -43,6 +43,9 @@ enum AudioListenerMode {
     FROM_CAMERA,
     CUSTOM
 };
+
+const float DEFAULT_WALKING_SPEED = 2.6f;
+
 Q_DECLARE_METATYPE(AudioListenerMode);
 
 class MyAvatar : public Avatar {
@@ -672,8 +675,7 @@ private:
     float _yawSpeed; // degrees/sec
     float _pitchSpeed; // degrees/sec
 
-    const float DEFAULT_WALKING_SPEED = 2.6f;
-    float _walkSpeed{ DEFAULT_WALKING_SPEED };
+    float _walkSpeed { DEFAULT_WALKING_SPEED };
 
     glm::vec3 _thrust { 0.0f };  // impulse accumulator for outside sources
 
