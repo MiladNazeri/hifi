@@ -17,7 +17,7 @@ Documentation
 =========
 Documentation is available at [docs.highfidelity.com](https://docs.highfidelity.com), if something is missing, please suggest it via a new job on Worklist (add to the hifi-docs project).
 
-There is also detailed [documentation on our coding standards](https://wiki.highfidelity.com/wiki/Coding_Standards).
+There is also detailed [documentation on our coding standards](https://docs.highfidelity.com/build-guide/coding-standards).
 
 Build Instructions 
 =========
