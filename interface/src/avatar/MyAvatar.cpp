@@ -2094,7 +2094,7 @@ void MyAvatar::updateActionMotor(float deltaTime) {
         _actionMotorVelocity = motorSpeed * direction;
     } else {
         // we're interacting with a floor --> simple horizontal speed and exponential decay
-        _actionMotorVelocity = _walkSpeed * direction;
+        _actionMotorVelocity = getWalkSpeed() * direction;
     }
 
     float boomChange = getDriveKey(ZOOM);
@@ -2233,18 +2233,22 @@ float MyAvatar::getDomainMaxScale() {
 }
 
 void MyAvatar::increaseSpeed() {
-    _walkSpeed = _walkSpeed + 2.0f < MAX_AVATAR_SPEED ? _walkSpeed + 2.0f : MAX_AVATAR_SPEED;
-    qCDebug(interfaceapp, "Changed Speed to %f", (double)_walkSpeed);
+    getWalkSpeed() + 2.0f < MAX_AVATAR_SPEED
+        ? setWalkSpeed(getWalkSpeed() + 2.0f)
+        : setWalkSpeed(MAX_AVATAR_SPEED);
+    qCDebug(interfaceapp, "Changed Speed to %f", getWalkSpeed());
 }
 
 void MyAvatar::decreaseSpeed() {
-    _walkSpeed = _walkSpeed - 2.0f > DEFAULT_WALKING_SPEED ? _walkSpeed - 2.0f : DEFAULT_WALKING_SPEED;
-    qCDebug(interfaceapp, "Changed Speed to %f", (double)_walkSpeed);
+    getWalkSpeed() - 2.0f > DEFAULT_WALKING_SPEED
+        ? setWalkSpeed(getWalkSpeed() - 2.0f)
+        : setWalkSpeed(DEFAULT_WALKING_SPEED);
+    qCDebug(interfaceapp, "Changed Speed to %f", getWalkSpeed());
 }
 
 void MyAvatar::resetSpeed() {
-    _walkSpeed = DEFAULT_WALKING_SPEED;
-    qCDebug(interfaceapp, "Changed Speed to %f", (double)_walkSpeed);
+    setWalkSpeed(DEFAULT_WALKING_SPEED);
+    qCDebug(interfaceapp, "Changed Speed to %f", getWalkSpeed());
 }
 
 void MyAvatar::increaseSize() {

@@ -554,6 +554,8 @@ public:
     Q_INVOKABLE bool isUp(const glm::vec3& direction) { return glm::dot(direction, _worldUpDirection) > 0.0f; }; // true iff direction points up wrt avatar's definition of up.
     Q_INVOKABLE bool isDown(const glm::vec3& direction) { return glm::dot(direction, _worldUpDirection) < 0.0f; };
 
+    float getWalkSpeed() { return _walkSpeed; };
+    void setWalkSpeed(float newWalkSpeed) { _walkSpeed = newWalkSpeed; };
 
 public slots:
     void increaseSpeed();
