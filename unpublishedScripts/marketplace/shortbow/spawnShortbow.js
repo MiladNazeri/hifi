@@ -179,7 +179,8 @@ function createLocalGame() {
     entityIDs.push(platformID);
 
     Entities.editEntity(scoreboardID, {
-        serverScripts: Script.resolvePath('shortbowServerEntity.js')
+        serverScripts: Script.resolvePath('shortbowServerEntity.js'),
+ 
     });
 
     spawnTemplates("SB.BowSpawn", {
@@ -200,7 +201,7 @@ function createLocalGame() {
             bowPositions.push(Vec3.sum(rootPosition, template.localPosition));
             Vec3.print("Pushing bow position", Vec3.sum(rootPosition, template.localPosition));
         } else if (template.name === "SB.EnemySpawn") {
-            spawnPositions.push(Vec3.sum(rootPosition, template.localPosition));
+            spawnPositions.push(Vec3.sum(Vec3.sum(rootPosition, template.localPosition), {"x": 0, "y": 100, "z": 0} ));
             Vec3.print("Pushing spawnposition", Vec3.sum(rootPosition, template.localPosition));
         }
     }

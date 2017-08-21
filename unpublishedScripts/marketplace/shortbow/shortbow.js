@@ -759,7 +759,9 @@ SHORTBOW_ENTITIES =
             "lastEdited": 1487892440231278,
             "lastEditedBy": "{91f193dd-829a-4b33-ab27-e9a26160634a}",
             "modelURL": "file:///c:/Users/ryanh/dev/hifi/unpublishedScripts/marketplace/shortbow/models/shortbow-platform.baked.fbx",
+            "compoundShapeURL": "file:///D:/_ROLC/_ROLC/Reference/R_Programming/R_VR/HF/unpublishedScripts/marketplace/shortbow/models/shortbow-platform-ch.obj",
             "name": "SB.Platform",
+            "density": 10000,
             "owningAvatarID": "{00000000-0000-0000-0000-000000000000}",
             "parentID": "{0cd1f1f7-53b9-4c15-bf25-42c0760d16f0}",
             "position": {
@@ -779,7 +781,7 @@ SHORTBOW_ENTITIES =
                 "y": -1.52587890625e-05,
                 "z": -1.52587890625e-05
             },
-            "shapeType": "static-mesh",
+            "shapeType": "compound",
             "type": "Model"
         },
         {
@@ -809,6 +811,7 @@ SHORTBOW_ENTITIES =
                 "y": -1.52587890625e-05,
                 "z": -1.52587890625e-05
             },
+            "script": "file:///c:/Users/ryanh/dev/hifi/unpublishedScripts/marketplace/shortbow/shortbowClientEntity.js",
             "serverScripts": "file:///c:/Users/ryanh/dev/hifi/unpublishedScripts/marketplace/shortbow/shortbowServerEntity.js",
             "shapeType": "static-mesh",
             "type": "Model"

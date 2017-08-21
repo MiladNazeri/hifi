@@ -111,6 +111,7 @@ var baseEnemyProperties = {
         "y": -9,
         "z": 0
     },
+    "density": 100,
     "angularVelocity": {
         "x": -0.058330666273832321,
         "y": -0.77943277359008789,
@@ -182,7 +183,7 @@ function searchForChildren(parentID, names, callback, timeoutMs) {
 }
 
 ShortbowGameManager = function(rootEntityID, bowPositions, spawnPositions) {
-    print("Starting game manager");
+    print("Starting game manager !");
     var self = this;
 
     this.gameState = GAME_STATES.IDLE;
@@ -215,7 +216,8 @@ ShortbowGameManager = function(rootEntityID, bowPositions, spawnPositions) {
         self.scoreDisplayID = children[SCORE_DISPLAY_NAME];
         self.livesDisplayID = children[LIVES_DISPLAY_NAME];
         self.highScoreDisplayID = children[HIGH_SCORE_DISPLAY_NAME];
-
+        print("self \n: ", JSON.stringify(self));
+        print("self setHighScore: \n" + JSON.stringify(self.setHighScore));
         sendAndUpdateHighScore(self.rootEntityID, self.score, self.waveNumber, 1, self.setHighScore.bind(self));
 
         self.reset();
@@ -252,35 +254,43 @@ ShortbowGameManager.prototype = {
             this.checkEnemiesTimer = null;
         }
 
-        for (var i = this.bowIDs.length - 1; i >= 0; i--) {
-            Entities.deleteEntity(this.bowIDs[i]);
+        if (this.checkRootMovedTimer) {
+            Script.clearInterval(this.checkRootMovedTimer);
+            this.checkRootMovedTimer = null;
         }
+        
+        this.deleteBows();
         this.bowIDs = [];
-        for (i = 0; i < this.remainingEnemies.length; i++) {
-            Entities.deleteEntity(this.remainingEnemies[i].id);
-        }
-        this.remainingEnemies = [];
+        this.deleteRemainingEnemies();
 
         this.gameState = GAME_STATES.IDLE;
     },
-    startGame: function() {
-        if (this.gameState !== GAME_STATES.IDLE) {
-            print("shortbowGameManagerManager.js | Error, trying to start game when not in idle state");
-            return;
-        }
+    getRootPosition: function () {
+        return Entities.getEntityProperties(this.rootEntityID, 'position').position;
+    },
+    didRootPositionMove: function () {
+        var rootPosition = this.getRootPosition();
+        var settleTime = null;
+        var MIN_SETTLE_TIME = 250;
 
-        if (this.loadedChildren === false) {
-            print('shortbowGameManager.js | Children have not loaded, not allowing game to start');
-            return;
-        }
+        return function () {
+            if (settleTime === null) {
+                settleTime = Date.now();
+            }
 
-        print("Game started!!");
+            rootPosition = this.getRootPosition();
 
-        this.rootPosition = Entities.getEntityProperties(this.rootEntityID, 'position').position;
-
-        Entities.editEntity(this.startButtonID, { visible: false });
-
-        // Spawn bows
+            if (JSON.stringify(rootPosition) != JSON.stringify(this._rootPosition) &&
+                Date.now() - settleTime > MIN_SETTLE_TIME) {
+                this._rootPosition = rootPosition;
+                settleTime = Date.now();
+                return true;
+            }
+            return false;
+        };
+    },
+    spawnBows: function () {
+        print('spawn bows');
         var bowSpawnEntityIDs = findChildrenWithName(this.rootEntityID, 'SB.BowSpawn');
         var bowSpawnProperties = getPropertiesForEntities(bowSpawnEntityIDs, ['position', 'rotation']);
         for (var i = 0; i < bowSpawnProperties.length; ++i) {
@@ -311,6 +321,75 @@ ShortbowGameManager.prototype = {
                 "userData": "{\"grabbableKey\":{\"grabbable\":true},\"wearable\":{\"joints\":{\"RightHand\":[{\"x\":0.0813,\"y\":0.0452,\"z\":0.0095},{\"x\":-0.3946,\"y\":-0.6604,\"z\":0.4748,\"w\":-0.4275}],\"LeftHand\":[{\"x\":-0.0881,\"y\":0.0259,\"z\":0.0159},{\"x\":0.4427,\"y\":-0.6519,\"z\":0.4592,\"w\":0.4099}]}}}"
             }));
         }
+    },
+    deleteBows: function () {
+        print('delete bows');
+        for (i = this.bowIDs.length - 1; i >= 0; i--) {
+            var id = this.bowIDs[i];
+            print("Checking bow: ", id);
+            var userData = utils.parseJSON(Entities.getEntityProperties(id, 'userData').userData);
+            var bowIsHeld = userData.grabKey !== undefined && userData.grabKey !== undefined && userData.grabKey.refCount > 0;
+            print("Held: ", bowIsHeld);
+            if (!bowIsHeld) {
+                Entities.deleteEntity(id);
+                this.bowIDs.splice(i, 1);
+            }
+        }
+    },
+    spawnEnemyQueue: function () {
+        print('spawn enemy queue');
+        var numberOfEnemiesLeftToSpawn = this.waveNumber * ENEMIES_PER_WAVE_MULTIPLIER;
+        var delayBetweenSpawns = 2000 / Math.max(1, Math.log(this.waveNumber));
+        var currentDelay = 2000;
+
+        var enemySpawnEntityIDs = findChildrenWithName(this.rootEntityID, 'SB.EnemySpawn');
+        var enemySpawnProperties = getPropertiesForEntities(enemySpawnEntityIDs, ['position', 'rotation']);
+
+        for (var i = 0; i < numberOfEnemiesLeftToSpawn; ++i) {
+            print("Adding enemy");
+            var idx = Math.floor(Math.random() * enemySpawnProperties.length);
+            var props = enemySpawnProperties[idx];
+
+            this.spawnQueue.push({
+                spawnAt: currentDelay,
+                position: Vec3.sum(props.position, {"x": 0, "y": 2, "z": 0}),
+                rotation: props.rotation,
+                velocity: Vec3.multiply(ENEMY_SPEED, Quat.getFront(props.rotation))
+
+            });
+            currentDelay += delayBetweenSpawns;
+        }
+
+        print("Number of enemies:", numberOfEnemiesLeftToSpawn);
+    },
+    deleteRemainingEnemies: function () {
+        print('delete remaining enemies');
+        for (i = 0; i < this.remainingEnemies.length; i++) {
+            Entities.deleteEntity(this.remainingEnemies[i].id);
+        }
+        this.remainingEnemies = [];
+    },
+    startGame: function() {
+        if (this.gameState !== GAME_STATES.IDLE) {
+            print("shortbowGameManagerManager.js | Error, trying to start game when not in idle state");
+            return;
+        }
+
+        if (this.loadedChildren === false) {
+            print('shortbowGameManager.js | Children have not loaded, not allowing game to start');
+            return;
+        }
+
+        print("Game started!!");
+
+        this.didRootPositionMove = this.didRootPositionMove();
+
+        this._rootPosition = this.getRootPosition();
+
+        Entities.editEntity(this.startButtonID, { visible: false });
+
+        // Spawn bows
+        this.spawnBows();
 
         // Initialize game state
         this.waveNumber = 0;
@@ -320,6 +399,7 @@ ShortbowGameManager.prototype = {
         this.nextWaveTimer = Script.setTimeout(this.startNextWave.bind(this), 100);
         this.spawnEnemyTimers = [];
         this.checkEnemiesTimer = null;
+        this.checkRootMovedTimer = null;
         this.remainingEnemies = [];
 
         // SpawnQueue is a list of enemies left to spawn. Each entry looks like:
@@ -334,13 +414,13 @@ ShortbowGameManager.prototype = {
 
         Audio.playSound(BEGIN_BUILDING_SOUND, {
             volume: 1.0,
-            position: this.rootPosition
+            position: this._rootPosition
         });
 		
-		var liveChecker = setInterval(function() {
+		var liveChecker = Script.setInterval(function() {
 			if (this.livesLeft <= 0) {
 				this.endGame();
-				clearInterval(liveChecker);
+				Script.clearInterval(liveChecker);
 			}
 		}, 1000);
     },
@@ -358,29 +438,10 @@ ShortbowGameManager.prototype = {
 
         Entities.editEntity(this.waveDisplayID, { text: this.waveNumber});
 
-        var numberOfEnemiesLeftToSpawn = this.waveNumber * ENEMIES_PER_WAVE_MULTIPLIER;
-        var delayBetweenSpawns = 2000 / Math.max(1, Math.log(this.waveNumber));
-        var currentDelay = 2000;
+        this.spawnEnemyQueue();
 
-        print("Number of enemies:", numberOfEnemiesLeftToSpawn);
         this.checkEnemiesTimer = Script.setInterval(this.checkEnemies.bind(this), 100);
-
-        var enemySpawnEntityIDs = findChildrenWithName(this.rootEntityID, 'SB.EnemySpawn');
-        var enemySpawnProperties = getPropertiesForEntities(enemySpawnEntityIDs, ['position', 'rotation']);
-
-        for (var i = 0; i < numberOfEnemiesLeftToSpawn; ++i) {
-            print("Adding enemy");
-            var idx = Math.floor(Math.random() * enemySpawnProperties.length);
-            var props = enemySpawnProperties[idx];
-            this.spawnQueue.push({
-                spawnAt: currentDelay,
-                position: props.position,
-                rotation: props.rotation,
-                velocity: Vec3.multiply(ENEMY_SPEED, Quat.getFront(props.rotation))
-
-            });
-            currentDelay += delayBetweenSpawns;
-        }
+        this.checkRootMovedTimer = Script.setInterval(this.checkRootMoved.bind(this), 500);
 
         print("Starting wave", this.waveNumber);
 
@@ -395,16 +456,26 @@ ShortbowGameManager.prototype = {
             Script.setTimeout(this.startNextWave.bind(this), 5000);
 
             Script.clearInterval(this.checkEnemiesTimer);
+            Script.clearInterval(this.checkRootMovedTimer);
             this.checkEnemiesTimer = null;
+            this.checkRootMovedTimer = null;
 
             // Play after 1.5s to let other sounds finish playing
             var self = this;
             Script.setTimeout(function() {
                 Audio.playSound(WAVE_COMPLETE_SOUND, {
                     volume: 1.0,
-                    position: self.rootPosition
+                    position: self._rootPosition
                 });
             }, 1500);
+        }
+    },
+    checkRootMoved: function () {
+        if (this.didRootPositionMove()) {
+            this.deleteBows();
+            this.deleteRemainingEnemies();
+            this.spawnBows();
+            this.spawnEnemyQueue();
         }
     },
     setHighScore: function(highScore) {
@@ -464,7 +535,7 @@ ShortbowGameManager.prototype = {
         for (var i = this.remainingEnemies.length - 1; i >= 0; --i) {
             var enemy = this.remainingEnemies[i];
             var timeSinceLastHeartbeat = Date.now() - enemy.lastHeartbeat;
-            var distance = Vec3.distance(enemy.lastKnownPosition, this.rootPosition);
+            var distance = Vec3.distance(enemy.lastKnownPosition, this._rootPosition);
             if (timeSinceLastHeartbeat > MAX_UNHEARD_TIME_BEFORE_DESTROYING_ENTITY_MS
                 || distance > MAX_DISTANCE_FROM_GAME_BEFORE_DESTROYING_ENTITY) {
 
@@ -474,7 +545,7 @@ ShortbowGameManager.prototype = {
 				// Play the sound when you hit an enemy
                 Audio.playSound(TARGET_HIT_SOUND, {
                     volume: 1.0,
-                    position: this.rootPosition
+                    position: this._rootPosition
                 });
                 this.setScore(this.score + POINTS_PER_KILL);
                 enemiesEscaped = true;
@@ -494,7 +565,7 @@ ShortbowGameManager.prototype = {
         Script.setTimeout(function() {
             Audio.playSound(GAME_OVER_SOUND, {
                 volume: 1.0,
-                position: self.rootPosition
+                position: self._rootPosition
             });
         }, 1500);
 
@@ -514,25 +585,13 @@ ShortbowGameManager.prototype = {
         this.spawnEnemyTimers = [];
 
         Script.clearInterval(this.checkEnemiesTimer);
+        Script.clearInterval(this.checkRootMovedTimer);
         this.checkEnemiesTimer = null;
+        this.checkRootMovedTimer = null;
 
+        this.deleteBows();
 
-        for (i = this.bowIDs.length - 1; i >= 0; i--) {
-            var id = this.bowIDs[i];
-            print("Checking bow: ", id);
-            var userData = utils.parseJSON(Entities.getEntityProperties(id, 'userData').userData);
-            var bowIsHeld = userData.grabKey !== undefined && userData.grabKey !== undefined && userData.grabKey.refCount > 0;
-            print("Held: ", bowIsHeld);
-            if (!bowIsHeld) {
-                Entities.deleteEntity(id);
-                this.bowIDs.splice(i, 1);
-            }
-        }
-
-        for (i = 0; i < this.remainingEnemies.length; i++) {
-            Entities.deleteEntity(this.remainingEnemies[i].id);
-        }
-        this.remainingEnemies = [];
+        this.deleteRemainingEnemies();
 
         // Wait a short time before showing the start button so that any current sounds
         // can finish playing.
@@ -551,7 +610,7 @@ ShortbowGameManager.prototype = {
             }
             switch (message.type) {
                 case 'start-game':
-                    this.startGame();
+                    this.startGame.bind(this)();
                     break;
                 case 'enemy-killed':
                     this.onEnemyKilled(message.entityID, message.position);
@@ -561,6 +620,9 @@ ShortbowGameManager.prototype = {
                     break;
                 case 'enemy-heartbeat':
                     this.onEnemyHeartbeat(message.entityID, message.position);
+                    break;
+                case 'root-moved':
+                    this.onRootMoved.bind(this)();
                     break;
                 default:
                     print("shortbowGameManager.js | Ignoring unknown message type: ", message.type);
@@ -579,7 +641,7 @@ ShortbowGameManager.prototype = {
                 this.remainingEnemies.splice(i, 1);
                 Audio.playSound(TARGET_HIT_SOUND, {
                     volume: 1.0,
-                    position: this.rootPosition
+                    position: this._rootPosition
                 });
                 // Update score
                 this.setScore(this.score + POINTS_PER_KILL);
@@ -605,7 +667,7 @@ ShortbowGameManager.prototype = {
                 this.setLivesLeft(this.livesLeft - 1);
                 Audio.playSound(ESCAPE_SOUND, {
                     volume: 1.0,
-                    position: this.rootPosition
+                    position: this._rootPosition
                 });
                 enemiesEscaped = true;
             }
@@ -625,5 +687,6 @@ ShortbowGameManager.prototype = {
                 break;
             }
         }
-    }
+    },
+    
 };

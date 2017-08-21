@@ -996,6 +996,10 @@ EquipHotspotBuddy.prototype.update = function(deltaTime, timestamp) {
             overlayInfoSet.targetSize = NORMAL_SIZE;
         }
 
+        print("overlay", JSON.stringify(overlayInfoSet));
+        print("timestamp", JSON.stringify(timestamp));
+        print("overlay.timestamp", JSON.stringify(overlayInfoSet.timestamp));
+
         // start to fade out this hotspot.
         if (overlayInfoSet.timestamp != timestamp) {
             // because this item timestamp has expired, it might not be in the cache anymore....
