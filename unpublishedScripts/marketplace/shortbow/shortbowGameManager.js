@@ -39,7 +39,7 @@ var TARGET_HIT_SOUND = SoundCache.getSound(Script.resolvePath("sounds/targetHit.
 var ESCAPE_SOUND = SoundCache.getSound(Script.resolvePath("sounds/escape.wav"));
 
 const STARTING_NUMBER_OF_LIVES = 6;
-const ENEMIES_PER_WAVE_MULTIPLIER = 2;
+const ENEMIES_PER_WAVE_MULTIPLIER = 20;
 const POINTS_PER_KILL = 100;
 const ENEMY_SPEED = 3.0;
 
@@ -123,14 +123,13 @@ var baseEnemyProperties = {
         "y": 0.63503998517990112,
         "z": 0.63503998517990112
     },
-    "density": 100,
     "dynamic": 1,
     "gravity": {
         "x": 0,
         "y": -15,
         "z": 0
     },
-    "lifetime": 20,
+    "lifetime": 30,
     "id": "{ed8f7339-8bbd-4750-968e-c3ceb9d64721}",
     "modelURL": Script.resolvePath("models/Amber.baked.fbx"),
     "owningAvatarID": "{00000000-0000-0000-0000-000000000000}",
@@ -335,6 +334,12 @@ ShortbowGameManager.prototype = {
         }
     },
     spawnEnemyQueue: function () {
+        // SpawnQueue is a list of enemies left to spawn. Each entry looks like:
+        //
+        //   { spawnAt: 1000, position: { x: 0, y: 0, z: 0 } }
+        //
+        // where spawnAt is the number of millseconds after the start of the wave
+        // to spawn the enemy. The list is sorted by spawnAt, ascending.
         print('spawn enemy queue');
         var numberOfEnemiesLeftToSpawn = this.waveNumber * ENEMIES_PER_WAVE_MULTIPLIER;
         var delayBetweenSpawns = 2000 / Math.max(1, Math.log(this.waveNumber));
@@ -347,7 +352,7 @@ ShortbowGameManager.prototype = {
             print("Adding enemy");
             var idx = Math.floor(Math.random() * enemySpawnProperties.length);
             var props = enemySpawnProperties[idx];
-            //Vec3.sum(props.position, {"x": 0, "y": 2, "z": -.75}),
+
             this.spawnQueue.push({
                 spawnAt: currentDelay,
                 position: props.position,

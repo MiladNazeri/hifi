@@ -179,8 +179,7 @@ function createLocalGame() {
     entityIDs.push(platformID);
 
     Entities.editEntity(scoreboardID, {
-        serverScripts: Script.resolvePath('shortbowServerEntity.js'),
- 
+        serverScripts: Script.resolvePath('shortbowServerEntity.js')
     });
 
     spawnTemplates("SB.BowSpawn", {
