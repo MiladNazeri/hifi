@@ -111,7 +111,6 @@ var baseEnemyProperties = {
         "y": -9,
         "z": 0
     },
-    "density": 100,
     "angularVelocity": {
         "x": -0.058330666273832321,
         "y": -0.77943277359008789,
@@ -124,21 +123,22 @@ var baseEnemyProperties = {
         "y": 0.63503998517990112,
         "z": 0.63503998517990112
     },
+    "density": 100,
     "dynamic": 1,
     "gravity": {
         "x": 0,
         "y": -15,
         "z": 0
     },
-    "lifetime": 30,
+    "lifetime": 20,
     "id": "{ed8f7339-8bbd-4750-968e-c3ceb9d64721}",
     "modelURL": Script.resolvePath("models/Amber.baked.fbx"),
     "owningAvatarID": "{00000000-0000-0000-0000-000000000000}",
     "queryAACube": {
         "scale": 1.0999215841293335,
-        "x": -0.54996079206466675,
-        "y": -0.54996079206466675,
-        "z": -0.54996079206466675
+        "x": 1,
+        "y": 1,
+        "z": 1
     },
     "shapeType": "sphere",
     "type": "Model",
@@ -183,7 +183,6 @@ function searchForChildren(parentID, names, callback, timeoutMs) {
 }
 
 ShortbowGameManager = function(rootEntityID, bowPositions, spawnPositions) {
-    print("Starting game manager !");
     var self = this;
 
     this.gameState = GAME_STATES.IDLE;
@@ -192,6 +191,7 @@ ShortbowGameManager = function(rootEntityID, bowPositions, spawnPositions) {
     this.bowPositions = bowPositions;
     this.rootPosition = null;
     this.spawnPositions = spawnPositions;
+    this.didRootPositionMove = this.didRootPositionMove();
 
     this.loadedChildren = false;
 
@@ -216,8 +216,6 @@ ShortbowGameManager = function(rootEntityID, bowPositions, spawnPositions) {
         self.scoreDisplayID = children[SCORE_DISPLAY_NAME];
         self.livesDisplayID = children[LIVES_DISPLAY_NAME];
         self.highScoreDisplayID = children[HIGH_SCORE_DISPLAY_NAME];
-        print("self \n: ", JSON.stringify(self));
-        print("self setHighScore: \n" + JSON.stringify(self.setHighScore));
         sendAndUpdateHighScore(self.rootEntityID, self.score, self.waveNumber, 1, self.setHighScore.bind(self));
 
         self.reset();
@@ -349,10 +347,10 @@ ShortbowGameManager.prototype = {
             print("Adding enemy");
             var idx = Math.floor(Math.random() * enemySpawnProperties.length);
             var props = enemySpawnProperties[idx];
-
+            //Vec3.sum(props.position, {"x": 0, "y": 2, "z": -.75}),
             this.spawnQueue.push({
                 spawnAt: currentDelay,
-                position: Vec3.sum(props.position, {"x": 0, "y": 2, "z": 0}),
+                position: props.position,
                 rotation: props.rotation,
                 velocity: Vec3.multiply(ENEMY_SPEED, Quat.getFront(props.rotation))
 
@@ -381,8 +379,6 @@ ShortbowGameManager.prototype = {
         }
 
         print("Game started!!");
-
-        this.didRootPositionMove = this.didRootPositionMove();
 
         this._rootPosition = this.getRootPosition();
 
@@ -475,6 +471,8 @@ ShortbowGameManager.prototype = {
             this.deleteBows();
             this.deleteRemainingEnemies();
             this.spawnBows();
+            this.spawnStartTime = Date.now();
+            this.spawnQueue = [];
             this.spawnEnemyQueue();
         }
     },
@@ -520,11 +518,14 @@ ShortbowGameManager.prototype = {
             this.spawnQueue.splice(0, 1);
             Script.setTimeout(function() {
                 const JUMP_SPEED = 5.0;
-                var velocity = Entities.getEntityProperties(entityID, 'velocity').velocity;
-                velocity.y += JUMP_SPEED;
-                Entities.editEntity(entityID, { velocity: velocity });
-
-            }, 500 + Math.random() * 4000);
+                try {
+                    var velocity = Entities.getEntityProperties(entityID, 'velocity').velocity;
+                    velocity.y += JUMP_SPEED;
+                    Entities.editEntity(entityID, { velocity: velocity });
+                } catch (e) {
+                    print("error editing entity: ", e);
+                }
+            }, 1750 + Math.random() * 4000);
         }
 
         // Check the list of remaining enemies to see if any are too far away
@@ -620,9 +621,6 @@ ShortbowGameManager.prototype = {
                     break;
                 case 'enemy-heartbeat':
                     this.onEnemyHeartbeat(message.entityID, message.position);
-                    break;
-                case 'root-moved':
-                    this.onRootMoved.bind(this)();
                     break;
                 default:
                     print("shortbowGameManager.js | Ignoring unknown message type: ", message.type);

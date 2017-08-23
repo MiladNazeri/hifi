@@ -31,7 +31,8 @@
             }
         }
 
-        gameManager = new ShortbowGameManager(this.entityID, bowPositions, spawnPositions);
+        var spawn = [spawnPositions[0]];
+        gameManager = new ShortbowGameManager(this.entityID, bowPositions, spawn);
     };
 
     this.unload = function() {
