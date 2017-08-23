@@ -39,7 +39,7 @@ var TARGET_HIT_SOUND = SoundCache.getSound(Script.resolvePath("sounds/targetHit.
 var ESCAPE_SOUND = SoundCache.getSound(Script.resolvePath("sounds/escape.wav"));
 
 const STARTING_NUMBER_OF_LIVES = 6;
-const ENEMIES_PER_WAVE_MULTIPLIER = 20;
+const ENEMIES_PER_WAVE_MULTIPLIER = 2;
 const POINTS_PER_KILL = 100;
 const ENEMY_SPEED = 3.0;
 
@@ -135,9 +135,9 @@ var baseEnemyProperties = {
     "owningAvatarID": "{00000000-0000-0000-0000-000000000000}",
     "queryAACube": {
         "scale": 1.0999215841293335,
-        "x": 1,
-        "y": 1,
-        "z": 1
+        "x": -0.54996079206466675,
+        "y": -0.54996079206466675,
+        "z": -0.54996079206466675
     },
     "shapeType": "sphere",
     "type": "Model",
