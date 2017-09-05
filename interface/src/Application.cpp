@@ -3397,13 +3397,19 @@ void Application::keyPressEvent(QKeyEvent* event) {
                 getMyAvatar()->resetSize();
                 break;
 
-            case Qt::Key_BracketLeft:
-                getMyAvatar()->decreaseSpeed();
-                break;
+            case Qt::Key_BracketLeft: {
+                if (isMeta) {
+                    getMyAvatar()->decreaseSpeed();
+                    break;
+                }
+            }
 
-            case Qt::Key_BracketRight:
-                getMyAvatar()->increaseSpeed();
-                break;
+            case Qt::Key_BracketRight: {
+                if (isMeta) {
+                    getMyAvatar()->increaseSpeed();
+                    break;
+                }
+            }
 
             case Qt::Key_Space: {
                 if (!event->isAutoRepeat()) {
