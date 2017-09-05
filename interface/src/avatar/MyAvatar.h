@@ -45,6 +45,8 @@ enum AudioListenerMode {
     CUSTOM
 };
 
+const float DEFAULT_WALKING_SPEED = 2.6f;
+
 Q_DECLARE_METATYPE(AudioListenerMode);
 
 class MyAvatar : public Avatar {
@@ -534,6 +536,9 @@ public:
     Q_INVOKABLE bool isDown(const glm::vec3& direction) { return glm::dot(direction, _worldUpDirection) < 0.0f; };
 
 public slots:
+    void increaseSpeed();
+    void decreaseSpeed();
+    void resetSpeed();
     void increaseSize();
     void decreaseSize();
     void resetSize();
@@ -651,6 +656,8 @@ private:
     float _boomLength { ZOOM_DEFAULT };
     float _yawSpeed; // degrees/sec
     float _pitchSpeed; // degrees/sec
+
+    float _walkSpeed { DEFAULT_WALKING_SPEED };
 
     glm::vec3 _thrust { 0.0f };  // impulse accumulator for outside sources
 

@@ -64,8 +64,8 @@ using namespace std;
 
 const float DEFAULT_REAL_WORLD_FIELD_OF_VIEW_DEGREES = 30.0f;
 
-const float MAX_WALKING_SPEED = 2.6f; // human walking speed
-const float MAX_BOOST_SPEED = 0.5f * MAX_WALKING_SPEED; // action motor gets additive boost below this speed
+const float HUMAN_WALKING_SPEED = 2.6f;
+const float MAX_BOOST_SPEED = 0.5f * HUMAN_WALKING_SPEED; // action motor gets additive boost below this speed
 const float MIN_AVATAR_SPEED = 0.05f;
 const float MIN_AVATAR_SPEED_SQUARED = MIN_AVATAR_SPEED * MIN_AVATAR_SPEED; // speed is set to zero below this
 
@@ -2121,7 +2121,7 @@ void MyAvatar::updateActionMotor(float deltaTime) {
         _actionMotorVelocity = motorSpeed * direction;
     } else {
         // we're interacting with a floor --> simple horizontal speed and exponential decay
-        _actionMotorVelocity = MAX_WALKING_SPEED * direction;
+        _actionMotorVelocity = _walkSpeed * direction;
     }
 
     float boomChange = getDriveKey(ZOOM);
@@ -2257,6 +2257,25 @@ float MyAvatar::getDomainMinScale() {
 
 float MyAvatar::getDomainMaxScale() {
     return _domainMaximumScale;
+}
+
+void MyAvatar::increaseSpeed() {
+    _walkSpeed + 2.0f < MAX_AVATAR_SPEED
+        ? _walkSpeed = _walkSpeed + 2.0f
+        : _walkSpeed = MAX_AVATAR_SPEED;
+    qCDebug(interfaceapp, "Changed Speed to %f", _walkSpeed);
+}
+
+void MyAvatar::decreaseSpeed() {
+    _walkSpeed - 2.0f > DEFAULT_WALKING_SPEED
+        ? _walkSpeed = _walkSpeed - 2.0f
+        : _walkSpeed = DEFAULT_WALKING_SPEED;
+    qCDebug(interfaceapp, "Changed Speed to %f", _walkSpeed);
+}
+
+void MyAvatar::resetSpeed() {
+    _walkSpeed = DEFAULT_WALKING_SPEED;
+    qCDebug(interfaceapp, "Changed Speed to %f", _walkSpeed);
 }
 
 void MyAvatar::increaseSize() {

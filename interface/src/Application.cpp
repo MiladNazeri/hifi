@@ -3396,6 +3396,15 @@ void Application::keyPressEvent(QKeyEvent* event) {
             case Qt::Key_Equal:
                 getMyAvatar()->resetSize();
                 break;
+
+            case Qt::Key_BracketLeft:
+                getMyAvatar()->decreaseSpeed();
+                break;
+
+            case Qt::Key_BracketRight:
+                getMyAvatar()->increaseSpeed();
+                break;
+
             case Qt::Key_Space: {
                 if (!event->isAutoRepeat()) {
                     // FIXME -- I don't think we've tested the HFActionEvent in a while... this looks possibly dubious
