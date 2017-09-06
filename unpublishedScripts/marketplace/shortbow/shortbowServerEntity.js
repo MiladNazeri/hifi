@@ -33,10 +33,12 @@
 
         gameManager = new ShortbowGameManager(this.entityID, bowPositions, spawnPositions);
     };
+
     this.unload = function() {
         if (gameManager) {
             gameManager.cleanup();
             gameManager = null;
         }
     };
+
 });

@@ -1882,45 +1882,50 @@ function MyController(hand) {
     //      * modelScale {Vec3} scale factor for model
     this.collectEquipHotspots = function(entityID) {
         var result = [];
-        var props = entityPropertiesCache.getProps(entityID);
-        var entityXform = new Xform(props.rotation, props.position);
-        var equipHotspotsProps = entityPropertiesCache.getEquipHotspotsProps(entityID);
-        if (equipHotspotsProps && equipHotspotsProps.length > 0) {
-            var i, length = equipHotspotsProps.length;
-            for (i = 0; i < length; i++) {
-                var hotspot = equipHotspotsProps[i];
-                if (hotspot.position && hotspot.radius && hotspot.joints) {
+        try {
+            var props = entityPropertiesCache.getProps(entityID);
+            var entityXform = new Xform(props.rotation, props.position);
+            var equipHotspotsProps = entityPropertiesCache.getEquipHotspotsProps(entityID);
+            if (equipHotspotsProps && equipHotspotsProps.length > 0) {
+                var i, length = equipHotspotsProps.length;
+                for (i = 0; i < length; i++) {
+                    var hotspot = equipHotspotsProps[i];
+                    if (hotspot.position && hotspot.radius && hotspot.joints) {
+                        result.push({
+                            key: entityID.toString() + i.toString(),
+                            entityID: entityID,
+                            localPosition: hotspot.position,
+                            worldPosition: entityXform.xformPoint(hotspot.position),
+                            radius: hotspot.radius,
+                            joints: hotspot.joints,
+                            modelURL: hotspot.modelURL,
+                            modelScale: hotspot.modelScale
+                        });
+                    }
+                }
+            } else {
+                var wearableProps = entityPropertiesCache.getWearableProps(entityID);
+                if (wearableProps && wearableProps.joints) {
                     result.push({
-                        key: entityID.toString() + i.toString(),
+                        key: entityID.toString() + "0",
                         entityID: entityID,
-                        localPosition: hotspot.position,
-                        worldPosition: entityXform.xformPoint(hotspot.position),
-                        radius: hotspot.radius,
-                        joints: hotspot.joints,
-                        modelURL: hotspot.modelURL,
-                        modelScale: hotspot.modelScale
+                        localPosition: {
+                            x: 0,
+                            y: 0,
+                            z: 0
+                        },
+                        worldPosition: entityXform.pos,
+                        radius: EQUIP_RADIUS,
+                        joints: wearableProps.joints,
+                        modelURL: null,
+                        modelScale: null
                     });
                 }
             }
-        } else {
-            var wearableProps = entityPropertiesCache.getWearableProps(entityID);
-            if (wearableProps && wearableProps.joints) {
-                result.push({
-                    key: entityID.toString() + "0",
-                    entityID: entityID,
-                    localPosition: {
-                        x: 0,
-                        y: 0,
-                        z: 0
-                    },
-                    worldPosition: entityXform.pos,
-                    radius: EQUIP_RADIUS,
-                    joints: wearableProps.joints,
-                    modelURL: null,
-                    modelScale: null
-                });
-            }
+        } catch (e) {
+            print("Error accessing entityPropertiesCache: ", e);
         }
+
         return result;
     };
 
