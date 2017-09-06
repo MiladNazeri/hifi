@@ -2263,19 +2263,19 @@ void MyAvatar::increaseSpeed() {
     _walkSpeed + 2.0f < MAX_AVATAR_SPEED
         ? _walkSpeed = _walkSpeed + 2.0f
         : _walkSpeed = MAX_AVATAR_SPEED;
-    qCDebug(interfaceapp, "Changed Speed to %f", _walkSpeed);
+    qCDebug(interfaceapp, "Changed Speed to %f", (double)_walkSpeed);
 }
 
 void MyAvatar::decreaseSpeed() {
     _walkSpeed - 2.0f > DEFAULT_WALKING_SPEED
         ? _walkSpeed = _walkSpeed - 2.0f
         : _walkSpeed = DEFAULT_WALKING_SPEED;
-    qCDebug(interfaceapp, "Changed Speed to %f", _walkSpeed);
+    qCDebug(interfaceapp, "Changed Speed to %f", (double)_walkSpeed);
 }
 
 void MyAvatar::resetSpeed() {
     _walkSpeed = DEFAULT_WALKING_SPEED;
-    qCDebug(interfaceapp, "Changed Speed to %f", _walkSpeed);
+    qCDebug(interfaceapp, "Changed Speed to %f", (double)_walkSpeed);
 }
 
 void MyAvatar::increaseSize() {
