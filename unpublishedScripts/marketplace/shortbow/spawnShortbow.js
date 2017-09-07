@@ -201,7 +201,7 @@ function createLocalGame() {
             Vec3.print("Pushing bow position", Vec3.sum(rootPosition, template.localPosition));
         } else if (template.name === "SB.EnemySpawn") {
             spawnPositions.push(Vec3.sum(rootPosition, template.localPosition));
-            Vec3.print("Pushing spawn position", Vec3.sum(rootPosition, template.localPosition));
+            Vec3.print("Pushing spawn position!!", Vec3.sum(rootPosition, template.localPosition));
         }
     }
 }

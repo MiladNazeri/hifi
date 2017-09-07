@@ -38,8 +38,8 @@ var EXPLOSION_SOUND = SoundCache.getSound(Script.resolvePath("sounds/explosion.w
 var TARGET_HIT_SOUND = SoundCache.getSound(Script.resolvePath("sounds/targetHit.wav"));
 var ESCAPE_SOUND = SoundCache.getSound(Script.resolvePath("sounds/escape.wav"));
 
-const STARTING_NUMBER_OF_LIVES = 6;
-const ENEMIES_PER_WAVE_MULTIPLIER = 2;
+const STARTING_NUMBER_OF_LIVES = 60;
+const ENEMIES_PER_WAVE_MULTIPLIER = 20;
 const POINTS_PER_KILL = 100;
 const ENEMY_SPEED = 3.0;
 
@@ -266,7 +266,7 @@ ShortbowGameManager.prototype = {
         return Entities.getEntityProperties(this.rootEntityID, 'position').position;
     },
     didRootPositionMove: function () {
-        var rootPosition = this.getRootPosition();
+        var rootPosition;
         var settleTime = null;
         var MIN_SETTLE_TIME = 250;
 
@@ -296,6 +296,7 @@ ShortbowGameManager.prototype = {
             this.bowIDs.push(Entities.addEntity({
                 "position": props.position,
                 "rotation": props.rotation,
+                "parentID": this.rootEntityID,
                 "collisionsWillMove": 1,
                 "compoundShapeURL": Script.resolvePath("bow/models/bow_collision_hull.obj"),
                 "created": "2016-09-01T23:57:55Z",
@@ -403,12 +404,6 @@ ShortbowGameManager.prototype = {
         this.checkRootMovedTimer = null;
         this.remainingEnemies = [];
 
-        // SpawnQueue is a list of enemies left to spawn. Each entry looks like:
-        //
-        //   { spawnAt: 1000, position: { x: 0, y: 0, z: 0 } }
-        //
-        // where spawnAt is the number of millseconds after the start of the wave
-        // to spawn the enemy. The list is sorted by spawnAt, ascending.
         this.spawnQueue = [];
 
         this.gameState = GAME_STATES.BETWEEN_WAVES;
@@ -442,7 +437,7 @@ ShortbowGameManager.prototype = {
         this.spawnEnemyQueue();
 
         this.checkEnemiesTimer = Script.setInterval(this.checkEnemies.bind(this), 100);
-        this.checkRootMovedTimer = Script.setInterval(this.checkRootMoved.bind(this), 500);
+        this.checkRootMovedTimer = Script.setInterval(this.checkRootMoved.bind(this), 500); 
 
         print("Starting wave", this.waveNumber);
 
