@@ -114,7 +114,7 @@ var highScoreDisplayID = null;
 var livesDisplayID = null;
 function createLocalGame() {
     var rootPosition = utils.findSurfaceBelowPosition(MyAvatar.position);
-    rootPosition.y += 5.27;
+    rootPosition.y += 6.11;
     rootPosition.z -= 25;
 
     platformID = spawnTemplate("SB.Platform", {
@@ -186,24 +186,6 @@ function createLocalGame() {
         visible: false
     });
 
-    /*
-    I don't think this is getting used anymore.
-    
-    var bowPositions = [];
-    var spawnPositions = [];
-    for (var i = 0; i < TEMPLATES.length; ++i) {
-        var template = TEMPLATES[i];
-
-        if (template.name === "SB.BowSpawn") {
-            bowPositions.push(Vec3.sum(rootPosition, template.localPosition));
-            Vec3.print("Pushing bow position", Vec3.sum(rootPosition, template.localPosition));
-        } else if (template.name === "SB.EnemySpawn") {
-            spawnPositions.push(Vec3.sum(rootPosition, template.localPosition));
-            Vec3.print("Pushing spawn position!!", Vec3.sum(rootPosition, template.localPosition));
-        }
-    }
-    
-    */
 }
 
 createLocalGame();

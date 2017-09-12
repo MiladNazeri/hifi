@@ -291,7 +291,6 @@ ShortbowGameManager.prototype = {
             this.bowIDs.push(Entities.addEntity({
                 "position": props.position,
                 "rotation": props.rotation,
-                "parentID": this.rootEntityID,
                 "collisionsWillMove": 1,
                 "compoundShapeURL": Script.resolvePath("bow/models/bow_collision_hull.obj"),
                 "created": "2016-09-01T23:57:55Z",
@@ -511,16 +510,6 @@ ShortbowGameManager.prototype = {
                 lastHeartbeat: Date.now()
             });
             this.spawnQueue.splice(0, 1);
-            Script.setTimeout(function() {
-                const JUMP_SPEED = 5;
-                try {
-                    var velocity = Entities.getEntityProperties(entityID, 'velocity').velocity;
-                    velocity.y += JUMP_SPEED;
-                    Entities.editEntity(entityID, { velocity: velocity });    
-                } catch (e) {
-                    print("error editing entity: ", e);
-                }
-            }, 500);
         }
 
         // Check the list of remaining enemies to see if any are too far away

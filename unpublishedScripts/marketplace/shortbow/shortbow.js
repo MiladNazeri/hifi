@@ -7,7 +7,7 @@
 //
 
 
-SHORTBOW_ENTITIES = Script.require('shortbow.json');
+SHORTBOW_ENTITIES = Script.require('./shortbow.json');
 
 // Add LocalPosition to entity data if parent properties are available
 var entities = SHORTBOW_ENTITIES.Entities;
