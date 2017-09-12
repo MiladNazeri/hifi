@@ -733,27 +733,27 @@
             "clientOnly": 0,
             "created": "2017-02-23T23:28:32Z",
             "dimensions": {
-                "x": 26.619264602661133,
-                "y": 14.24090576171875,
-                "z": 39.351066589355469
+                "x": 26.61927032470703,
+                "y": 14.240901947021484,
+                "z": 39.3510627746582
             },
-            "id": "{d4c8f577-944d-4d50-ac85-e56387c0ef0a}",
-            "lastEdited": 1487892440231278,
+            "friction": 1,
+            "id": "{0cd1f1f7-53b9-4c15-bf25-42c0760d16f0}",
+            "lastEdited": 1487892440231832,
             "lastEditedBy": "{91f193dd-829a-4b33-ab27-e9a26160634a}",
-            "modelURL": "file:///c:/Users/ryanh/dev/hifi/unpublishedScripts/marketplace/shortbow/models/shortbow-platform.baked.fbx",
+            "modelURL": "file:///c:/Users/ryanh/dev/hifi/unpublishedScripts/marketplace/shortbow/models/shortbow-combined-meshes.baked.fbx",
             "name": "SB.Platform",
             "owningAvatarID": "{00000000-0000-0000-0000-000000000000}",
-            "parentID": "{0cd1f1f7-53b9-4c15-bf25-42c0760d16f0}",
+            "queryAACube": {
+                "scale": 49.597328186035156,
+                "x": -24.798664093017578,
+                "y": -24.798664093017578,
+                "z": -24.798664093017578
+            },
             "position": {
                 "x": 0.097909502685070038,
                 "y": -1.0163799524307251,
                 "z": 2.0321114063262939
-            },
-            "queryAACube": {
-                "scale": 49.597328186035156,
-                "x": -20.681917190551758,
-                "y": -1829.9739990234375,
-                "z": -38.890060424804688
             },
             "rotation": {
                 "w": 1,
@@ -761,6 +761,7 @@
                 "y": -1.52587890625e-05,
                 "z": -1.52587890625e-05
             },
+            "serverScripts": "file:///c:/Users/ryanh/dev/hifi/unpublishedScripts/marketplace/shortbow/shortbowServerEntity.js",
             "shapeType": "static-mesh",
             "type": "Model"
         },

@@ -106,25 +106,25 @@ for (var i = 0; i < TEMPLATES.length; ++i) {
 
 var entityIDs = [];
 
-var scoreboardID = null;
+var platformID = null;
 var buttonID = null;
 var waveDisplayID = null;
 var scoreDisplayID = null;
 var highScoreDisplayID = null;
 var livesDisplayID = null;
-var platformID = null;
 function createLocalGame() {
     var rootPosition = utils.findSurfaceBelowPosition(MyAvatar.position);
-    rootPosition.y += 6.11;
+    rootPosition.y += 5.27;
+    rootPosition.z -= 25;
 
-    scoreboardID = spawnTemplate("SB.Scoreboard", {
+    platformID = spawnTemplate("SB.Platform", {
         position: rootPosition
     });
-    entityIDs.push(scoreboardID);
+    entityIDs.push(platformID);
 
     // Create start button
     buttonID = spawnTemplate("SB.StartButton", {
-        parentID: scoreboardID,
+        parentID: platformID,
         script: Script.resolvePath("startGameButtonClientEntity.js"),
         userData: JSON.stringify({
             grabbableKey: {
@@ -136,7 +136,7 @@ function createLocalGame() {
 
 
     waveDisplayID = spawnTemplate("SB.DisplayWave", {
-        parentID: scoreboardID,
+        parentID: platformID,
         userData: JSON.stringify({
             displayType: "wave"
         })
@@ -144,7 +144,7 @@ function createLocalGame() {
     entityIDs.push(waveDisplayID);
 
     scoreDisplayID = spawnTemplate("SB.DisplayScore", {
-        parentID: scoreboardID,
+        parentID: platformID,
         userData: JSON.stringify({
             displayType: "score"
         })
@@ -152,7 +152,7 @@ function createLocalGame() {
     entityIDs.push(scoreDisplayID);
 
     livesDisplayID = spawnTemplate("SB.DisplayLives", {
-        parentID: scoreboardID,
+        parentID: platformID,
         userData: JSON.stringify({
             displayType: "lives"
         })
@@ -160,37 +160,35 @@ function createLocalGame() {
     entityIDs.push(livesDisplayID);
 
     highScoreDisplayID = spawnTemplate("SB.DisplayHighScore", {
-        parentID: scoreboardID,
+        parentID: platformID,
         userData: JSON.stringify({
             displayType: "highscore"
         })
     });
     entityIDs.push(highScoreDisplayID);
 
-    platformID = spawnTemplate("SB.Platform", {
-        parentID: scoreboardID
-    });
-    entityIDs.push(platformID);
-
     spawnTemplate("SB.GateCollider", {
-        parentID: scoreboardID,
+        parentID: platformID,
         visible: false
     });
     entityIDs.push(platformID);
 
-    Entities.editEntity(scoreboardID, {
+    Entities.editEntity(platformID, {
         serverScripts: Script.resolvePath('shortbowServerEntity.js')
     });
 
     spawnTemplates("SB.BowSpawn", {
-        parentID: scoreboardID,
+        parentID: platformID,
         visible: false
     });
     spawnTemplates("SB.EnemySpawn", {
-        parentID: scoreboardID,
+        parentID: platformID,
         visible: false
     });
 
+    /*
+    I don't think this is getting used anymore.
+    
     var bowPositions = [];
     var spawnPositions = [];
     for (var i = 0; i < TEMPLATES.length; ++i) {
@@ -204,6 +202,8 @@ function createLocalGame() {
             Vec3.print("Pushing spawn position!!", Vec3.sum(rootPosition, template.localPosition));
         }
     }
+    
+    */
 }
 
 createLocalGame();

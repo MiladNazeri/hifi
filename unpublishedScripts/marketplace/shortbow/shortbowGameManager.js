@@ -106,11 +106,6 @@ var baseEnemyProperties = {
     "damping": 0,
     "linearDamping": 0,
     "angularDamping": 0,
-    "acceleration": {
-        "x": 0,
-        "y": -9,
-        "z": 0
-    },
     "angularVelocity": {
         "x": -0.058330666273832321,
         "y": -0.77943277359008789,
@@ -500,7 +495,7 @@ ShortbowGameManager.prototype = {
         while (this.spawnQueue.length > 0 && waveElapsedTime > this.spawnQueue[0].spawnAt) {
             baseEnemyProperties.position = this.spawnQueue[0].position;
             baseEnemyProperties.rotation = this.spawnQueue[0].rotation;
-            baseEnemyProperties.velocity= this.spawnQueue[0].velocity;
+            baseEnemyProperties.velocity = this.spawnQueue[0].velocity;
 
             baseEnemyProperties.userData = JSON.stringify({
                 gameChannel: this.commChannelName,
@@ -517,15 +512,15 @@ ShortbowGameManager.prototype = {
             });
             this.spawnQueue.splice(0, 1);
             Script.setTimeout(function() {
-                const JUMP_SPEED = 5.0;
+                const JUMP_SPEED = 5;
                 try {
                     var velocity = Entities.getEntityProperties(entityID, 'velocity').velocity;
                     velocity.y += JUMP_SPEED;
-                    Entities.editEntity(entityID, { velocity: velocity });
+                    Entities.editEntity(entityID, { velocity: velocity });    
                 } catch (e) {
                     print("error editing entity: ", e);
                 }
-            }, 1750 + Math.random() * 4000);
+            }, 500);
         }
 
         // Check the list of remaining enemies to see if any are too far away
