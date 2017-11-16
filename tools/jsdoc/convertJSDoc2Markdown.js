@@ -4,7 +4,7 @@
 const path = require('path');
 const fs = require('fs');
 const jsPath = path.join(__dirname, 'js', '.');
-const { execSync } = require('child_process');
+const { execFile } = require('child_process');
 
 if (fs.existsSync(jsPath)){
   console.log('js path exists');
@@ -13,7 +13,16 @@ if (fs.existsSync(jsPath)){
   fs.mkdirSync(jsPath);
 }
 
+var filesToRead = fs.readdirSync(jsPath);
+
 console.log("running Jsdoc");
-execSync('jsdoc . -c config_md-mod.json');
-console.log("converting to markdown");
-execSync(`jsdox ${jsPath} --output jsDocs folder`);
+execFile('jsdoc . -c config_md-mod.json', (err, stdout, stderr)=>{
+  console.log(stdout);
+  filesToRead.forEach(file => {
+    execFile(`jsdoc2md ${path.join(jsPath,file)}`, (err, stdout, stderr) => {
+      console.log("err", err);
+      console.log("stdout:", stdout);
+      fs.writeFileSync(`${path.join(jsPath, file + 'md')}`, stdout);
+    });
+  })
+});
