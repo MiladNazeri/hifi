@@ -67,6 +67,7 @@ gvr-interface/libs/*
 TAGS
 *.sw[po]
 *.qmlc
+*.jsc
 
 # ignore QML compilation output
 *.qmlc
