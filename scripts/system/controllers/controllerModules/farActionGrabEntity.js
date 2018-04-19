@@ -14,7 +14,7 @@
    PICK_MAX_DISTANCE, COLORS_GRAB_SEARCHING_HALF_SQUEEZE, COLORS_GRAB_SEARCHING_FULL_SQUEEZE, COLORS_GRAB_DISTANCE_HOLD,
    DEFAULT_SEARCH_SPHERE_DISTANCE, TRIGGER_OFF_VALUE, TRIGGER_ON_VALUE, ZERO_VEC, ensureDynamic,
    getControllerWorldLocation, projectOntoEntityXYPlane, ContextOverlay, HMD, Reticle, Overlays, isPointingAtUI
-   Picks, makeLaserLockInfo Xform, makeLaserParams, AddressManager, getEntityParents, Selection, DISPATCHER_HOVERING_LIST
+   Picks, makeLaserLockInfo Xform, makeLaserParams, location, getEntityParents, Selection, DISPATCHER_HOVERING_LIST
 */
 
 Script.include("/~/system/libraries/controllerDispatcherUtils.js");
@@ -463,7 +463,7 @@ Script.include("/~/system/libraries/Xform.js");
                             "userData", "locked", "type", "href"
                         ]);
                         if (targetProps.href !== "") {
-                            AddressManager.handleLookupString(targetProps.href);
+                            location.handleLookupString(targetProps.href);
                             return makeRunningValues(false, [], []);
                         }
 

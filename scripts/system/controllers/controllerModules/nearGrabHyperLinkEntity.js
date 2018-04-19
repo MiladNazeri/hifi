@@ -71,7 +71,7 @@
 
             if (controllerData.triggerClicks[this.hand] ||
                 controllerData.secondaryValues[this.hand] > BUMPER_ON_VALUE) {
-                AddressManager.handleLookupString(this.hyperlink);
+                location.handleLookupString(this.hyperlink);
                 return makeRunningValues(false, [], []);
             }
 
