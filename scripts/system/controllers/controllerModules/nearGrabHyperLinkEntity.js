@@ -12,7 +12,7 @@
    propsArePhysical, Messages, HAPTIC_PULSE_STRENGTH, HAPTIC_PULSE_DURATION, entityIsGrabbable,
    Quat, Vec3, MSECS_PER_SEC, getControllerWorldLocation, makeDispatcherModuleParameters, makeRunningValues,
    TRIGGER_OFF_VALUE, NEAR_GRAB_RADIUS, findGroupParent, entityIsCloneable, propsAreCloneDynamic, cloneEntity,
-   HAPTIC_PULSE_STRENGTH, HAPTIC_PULSE_DURATION, BUMPER_ON_VALUE, AddressManager
+   HAPTIC_PULSE_STRENGTH, HAPTIC_PULSE_DURATION, BUMPER_ON_VALUE, location
 */
 
 (function() {
