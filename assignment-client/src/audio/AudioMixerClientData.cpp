@@ -92,6 +92,8 @@ int AudioMixerClientData::processPackets(ConcurrentAddedStreams& addedStreams) {
             case PacketType::PerAvatarGainSet:
                 parsePerAvatarGainSet(*packet, node);
                 break;
+            case PacketType::AvatarGainSoloSet:
+                parseAvatarGainSoloSet(*packet, node);
             case PacketType::NodeIgnoreRequest:
                 parseNodeIgnoreRequest(packet, node);
                 break;
@@ -200,6 +202,29 @@ void AudioMixerClientData::parsePerAvatarGainSet(ReceivedMessage& message, const
         setGainForAvatar(avatarUUID, gain);
         qCDebug(audio) << "Setting avatar gain adjustment for hrtf[" << uuid << "][" << avatarUUID << "] to " << gain;
     }
+}
+
+void AudioMixerClientData::parseAvatarGainSoloSet(ReceivedMessage& message, const SharedNodePointer& node) {
+    QUuid uuid = node->getUUID();
+    QUuid avatarUUID = QUuid::fromRfc4122(message.readWithoutCopy(NUM_BYTES_RFC4122_UUID));
+    uint8_t packedGain;
+    message.readPrimitive(&packedGain);
+    float gain = unpackFloatGainFromByte(packedGain);
+
+    // set the per-source avatar gain
+    
+    auto it = _streams.active.begin();
+
+    while (it != _streams.active.end()) {
+        auto id = it->nodeStreamID.nodeID;
+        if (id != avatarUUID) {
+            setGainForAvatar(id, gain);
+        }
+        it++;
+    }
+
+    qCDebug(audio) << "Setting avatar gain adjustment for hrtf[" << uuid << "][" << avatarUUID << "] to " << gain;
+
 }
 
 void AudioMixerClientData::setGainForAvatar(QUuid nodeID, uint8_t gain) {
