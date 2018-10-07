@@ -135,7 +135,9 @@ public:
         EntityQueryInitialResultsComplete,
         BulkAvatarTraits,
 
-        NUM_PACKET_TYPE
+        NUM_PACKET_TYPE,
+
+        AvatarGainSoloSet,
     };
 
     const static QHash<PacketTypeEnum::Value, PacketTypeEnum::Value> getReplicatedPacketMapping() {

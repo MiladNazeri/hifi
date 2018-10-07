@@ -89,6 +89,8 @@ public slots:
     */
     float getAvatarGain(const QUuid& nodeID);
 
+    void soloAvatar(const QUuid& nodeID);
+
     /**jsdoc
      * Kick/ban another user. Removes them from the server and prevents them from returning. Bans by either user name (if 
      * available) or machine fingerprint otherwise. This will only do anything if you're an admin of the domain you're in. 

@@ -82,6 +82,7 @@ public:
     void personalMuteNodeBySessionID(const QUuid& nodeID, bool muteEnabled);
     bool isPersonalMutingNode(const QUuid& nodeID) const;
     void setAvatarGain(const QUuid& nodeID, float gain);
+    void soloAvatar(const QUuid& nodeID);
     float getAvatarGain(const QUuid& nodeID);
 
     void kickNodeBySessionID(const QUuid& nodeID);
@@ -92,6 +93,9 @@ public:
 
     bool getSendDomainServerCheckInEnabled() { return _sendDomainServerCheckInEnabled; }
     void setSendDomainServerCheckInEnabled(bool enabled) { _sendDomainServerCheckInEnabled = enabled; }
+
+    bool getIsSoloEnabled() { return _isSoloEnabled; }
+    void setIsSoloEnabled(bool enabled) { _isSoloEnabled = enabled; }
 
     void removeFromIgnoreMuteSets(const QUuid& nodeID);
 
@@ -173,6 +177,8 @@ private:
     bool _requestsDomainListData { false };
 
     bool _sendDomainServerCheckInEnabled { true };
+    
+    bool _isSoloEnabled{ false };
 
     mutable QReadWriteLock _ignoredSetLock;
     tbb::concurrent_unordered_set<QUuid, UUIDHasher> _ignoredNodeIDs;

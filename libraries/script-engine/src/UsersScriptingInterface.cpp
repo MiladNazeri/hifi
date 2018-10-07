@@ -47,6 +47,10 @@ void UsersScriptingInterface::setAvatarGain(const QUuid& nodeID, float gain) {
     DependencyManager::get<NodeList>()->setAvatarGain(nodeID, gain);
 }
 
+void UsersScriptingInterface::soloAvatar(const QUuid& nodeID) {
+    DependencyManager::get<NodeList>()->soloAvatar(nodeID);
+}
+
 float UsersScriptingInterface::getAvatarGain(const QUuid& nodeID) {
     return DependencyManager::get<NodeList>()->getAvatarGain(nodeID);
 }
