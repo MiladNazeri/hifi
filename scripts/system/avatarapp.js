@@ -335,10 +335,15 @@ function fromQml(message) { // messages are {method, params}, like json-rpc. See
         currentAvatar.avatarScale = message.avatarScale;
         break;
     case 'saveSettings':
+        
+        
         MyAvatar.setAvatarScale(message.avatarScale);
         currentAvatar.avatarScale = message.avatarScale;
 
-        MyAvatar.setDominantHand(message.settings.dominantHand);
+        if (currentAvatarSettings.dominantHand !== message.settings.dominantHand) {
+            MyAvatar.setDominantHand(message.settings.dominantHand);
+        }
+
         MyAvatar.setHmdAvatarAlignmentType(message.settings.hmdAvatarAlignmentType);
         MyAvatar.setOtherAvatarsCollisionsEnabled(message.settings.otherAvatarsCollisionsEnabled);
         MyAvatar.setCollisionsEnabled(message.settings.collisionsEnabled);
