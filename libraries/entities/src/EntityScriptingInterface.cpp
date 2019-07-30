@@ -1051,7 +1051,7 @@ const int FIXED_FONT_POINT_SIZE = 40;
 const int FIXED_FONT_SCALING_RATIO = FIXED_FONT_POINT_SIZE * 90.0f;
 const float LINE_SCALE_RATIO = 1.2f;
 QSizeF EntityScriptingInterface::computeStringDimensions(const QString& text, const float& lineHeight, const char* family) {
-    TextRenderer3D* textRender = TextRenderer3D::getInstance(family, lineHeight / 2.0);
+    TextRenderer3D* textRender = TextRenderer3D::getInstance(family, lineHeight / 2.0f);
     auto extents = textRender->computeExtent(text);
 
     float maxHeight = (float)textRender->computeExtent("Xy").y * LINE_SCALE_RATIO;
