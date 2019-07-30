@@ -1051,12 +1051,12 @@ const int FIXED_FONT_POINT_SIZE = 40;
 const int FIXED_FONT_SCALING_RATIO = FIXED_FONT_POINT_SIZE * 90.0f;
 const float LINE_SCALE_RATIO = 1.2f;
 // Will need to add a new argument for fony family to support additional font options
-QSizeF EntityScriptingInterface::computeStringDimensions(const QString& text, const float& lineHeight) {
-    TextRenderer3D* textRender = TextRenderer3D::getInstance(SANS_FONT_FAMILY, lineHeight / 2.0f);
+QSizeF EntityScriptingInterface::computeStringDimensions(const QString& text, const float& pointSize, const char* family) {
+    TextRenderer3D* textRender = TextRenderer3D::getInstance(family, pointSize);
     auto extents = textRender->computeExtent(text);
 
     float maxHeight = (float)textRender->computeExtent("Xy").y * LINE_SCALE_RATIO;
-    float pointToWorldScale = (maxHeight / FIXED_FONT_SCALING_RATIO) * lineHeight;
+    float pointToWorldScale = (maxHeight / FIXED_FONT_SCALING_RATIO) * (pointSize * 2.0);
 
     return QSizeF(extents.x, extents.y) * pointToWorldScale;
 }
