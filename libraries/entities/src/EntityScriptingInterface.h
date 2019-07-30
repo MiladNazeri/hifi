@@ -552,7 +552,7 @@ public slots:
     * @function Entities.computeStringDimensions
     * @param {string} text - The string to calculate the size of.
     * @param {number} lineHeight - The line height the entity will be set at
-    * @param {string} text - The font family name
+    * @param {string} [family="Helvetica"] text - The font family name (Only the default Helvetica is currently supported)
     * @returns {Size} the size of the <code>text</code> in meters if the object is a text entity, otherwise <code>{ height: 0, width: 0 }</code>
     */
     Q_INVOKABLE QSizeF computeStringDimensions(const QString& text, const float& lineHeight, const char* family = SANS_FONT_FAMILY);
