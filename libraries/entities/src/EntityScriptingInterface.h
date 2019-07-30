@@ -37,6 +37,8 @@
 
 #include "BaseScriptEngine.h"
 
+#include "../../libraries/render-utils/src/TextRenderer3D.h"
+
 class EntityTree;
 class MeshProxy;
 
@@ -49,9 +51,10 @@ extern const QString NOT_GRABBABLE_USER_DATA;
 // problems with their own Entity scripts.
 class EntityPropertyMetadataRequest {
 public:
-    EntityPropertyMetadataRequest(BaseScriptEngine* engine) : _engine(engine) {};
+    EntityPropertyMetadataRequest(BaseScriptEngine* engine) : _engine(engine){};
     bool script(EntityItemID entityID, QScriptValue handler);
     bool serverScripts(EntityItemID entityID, QScriptValue handler);
+
 private:
     QPointer<BaseScriptEngine> _engine;
 };
@@ -74,10 +77,10 @@ private:
 // "accurate" is currently always true because the ray intersection is always performed with an Octree::Lock.
 class RayToEntityIntersectionResult {
 public:
-    bool intersects { false };
-    bool accurate { true };
+    bool intersects{ false };
+    bool accurate{ true };
     QUuid entityID;
-    float distance { 0.0f };
+    float distance{ 0.0f };
     BoxFace face;
     glm::vec3 intersection;
     glm::vec3 surfaceNormal;
@@ -89,11 +92,11 @@ void RayToEntityIntersectionResultFromScriptValue(const QScriptValue& object, Ra
 
 class ParabolaToEntityIntersectionResult {
 public:
-    bool intersects { false };
-    bool accurate { true };
+    bool intersects{ false };
+    bool accurate{ true };
     QUuid entityID;
-    float distance { 0.0f };
-    float parabolicDistance { 0.0f };
+    float distance{ 0.0f };
+    float parabolicDistance{ 0.0f };
     BoxFace face;
     glm::vec3 intersection;
     glm::vec3 surfaceNormal;
@@ -152,19 +155,20 @@ public:
  *     keyboard focus.
  */
 /// handles scripting of Entity commands from JS passed to assigned clients
-class EntityScriptingInterface : public OctreeScriptingInterface, public Dependency  {
+class EntityScriptingInterface : public OctreeScriptingInterface, public Dependency {
     Q_OBJECT
     Q_PROPERTY(QUuid keyboardFocusEntity READ getKeyboardFocusEntity WRITE setKeyboardFocusEntity)
 
     friend EntityPropertyMetadataRequest;
+
 public:
     EntityScriptingInterface(bool bidOnSimulationOwnership);
 
     class ActivityTracking {
     public:
-        int addedEntityCount { 0 };
-        int deletedEntityCount { 0 };
-        int editedEntityCount { 0 };
+        int addedEntityCount{ 0 };
+        int deletedEntityCount{ 0 };
+        int editedEntityCount{ 0 };
     };
 
     EntityEditPacketSender* getEntityPacketSender() const { return (EntityEditPacketSender*)getPacketSender(); }
@@ -178,10 +182,14 @@ public:
     void resetActivityTracking();
     ActivityTracking getActivityTracking() const { return _activityTracking; }
 
-    RayToEntityIntersectionResult evalRayIntersectionVector(const PickRay& ray, PickFilter searchFilter,
-        const QVector<EntityItemID>& entityIdsToInclude, const QVector<EntityItemID>& entityIdsToDiscard);
-    ParabolaToEntityIntersectionResult evalParabolaIntersectionVector(const PickParabola& parabola, PickFilter searchFilter,
-        const QVector<EntityItemID>& entityIdsToInclude, const QVector<EntityItemID>& entityIdsToDiscard);
+    RayToEntityIntersectionResult evalRayIntersectionVector(const PickRay& ray,
+                                                            PickFilter searchFilter,
+                                                            const QVector<EntityItemID>& entityIdsToInclude,
+                                                            const QVector<EntityItemID>& entityIdsToDiscard);
+    ParabolaToEntityIntersectionResult evalParabolaIntersectionVector(const PickParabola& parabola,
+                                                                      PickFilter searchFilter,
+                                                                      const QVector<EntityItemID>& entityIdsToInclude,
+                                                                      const QVector<EntityItemID>& entityIdsToDiscard);
 
     /**jsdoc
      * Gets the properties of multiple entities.
@@ -200,7 +208,9 @@ public:
      * print("Nearby entity names: " + JSON.stringify(propertySets));
     */
     static QScriptValue getMultipleEntityProperties(QScriptContext* context, QScriptEngine* engine);
-    QScriptValue getMultipleEntityPropertiesInternal(QScriptEngine* engine, QVector<QUuid> entityIDs, const QScriptValue& extendedDesiredProperties);
+    QScriptValue getMultipleEntityPropertiesInternal(QScriptEngine* engine,
+                                                     QVector<QUuid> entityIDs,
+                                                     const QScriptValue& extendedDesiredProperties);
 
     QUuid addEntityInternal(const EntityItemProperties& properties, entity::HostType entityHostType);
 
@@ -349,8 +359,15 @@ public slots:
     /// temporary method until addEntity can be used from QJSEngine
     /// Deliberately not adding jsdoc, only used internally.
     // FIXME: Deprecate and remove from the API.
-    Q_INVOKABLE QUuid addModelEntity(const QString& name, const QString& modelUrl, const QString& textures, const QString& shapeType, bool dynamic,
-                                     bool collisionless, bool grabbable, const glm::vec3& position, const glm::vec3& gravity);
+    Q_INVOKABLE QUuid addModelEntity(const QString& name,
+                                     const QString& modelUrl,
+                                     const QString& textures,
+                                     const QString& shapeType,
+                                     bool dynamic,
+                                     bool collisionless,
+                                     bool grabbable,
+                                     const glm::vec3& position,
+                                     const glm::vec3& gravity);
 
     /**jsdoc
      * Creates a clone of an entity. The clone has the same properties as the original except that: it has a modified
@@ -541,11 +558,20 @@ public slots:
      * @param {Uuid} id - The ID of the Text entity to use for calculation.
      * @param {string} text - The string to calculate the size of.
      * @returns {Size} The size of the <code>text</code> in meters if the object is a text entity, otherwise
-     *     <code>{ height: 0, width : 0 }</code>.
+     *     <code>{ height: 0, width: 0 }</code>.
      */
     Q_INVOKABLE QSizeF textSize(const QUuid& id, const QString& text);
 
     /**jsdoc
+    * Calculates the size of some text in a {@link Entities.EntityProperties-Text|Text} by giving a string and a line height. 
+    * @function Entities.computeStringDimensions
+    * @param {string} text - The string to calculate the size of.
+    * @param {number} lineHeight - The line height the entity will be set at
+    * @returns {Size} the size of the <code>text</code> in meters
+    */
+    Q_INVOKABLE QSizeF computeStringDimensions(const QString& text, const float& lineHeight);
+
+        /**jsdoc
      * Calls a method in a client entity script from an Interface, avatar, or client entity script, or calls a method in a 
      * server entity script from a server entity script. The entity script method must be exposed as a property in the target 
      * entity script. Additionally, if calling a server entity script, the server entity script must include the method's name 
@@ -577,7 +603,8 @@ public slots:
      *     Entities.callEntityMethod(entityID, "entityMethod", ["hello", 12]);
      * }, 1000); // Wait for the entity to be created.
      */
-    Q_INVOKABLE void callEntityMethod(const QUuid& entityID, const QString& method, const QStringList& params = QStringList());
+        Q_INVOKABLE
+        void callEntityMethod(const QUuid& entityID, const QString& method, const QStringList& params = QStringList());
 
     /**jsdoc
      * Calls a method in a server entity script from an Interface, avatar, or client entity script. The server entity script 
@@ -614,7 +641,9 @@ public slots:
      *     Entities.callEntityServerMethod(entityID, "entityMethod", ["hello", 12]);
      * }, 1000); // Wait for the entity to be created.
      */
-    Q_INVOKABLE void callEntityServerMethod(const QUuid& entityID, const QString& method, const QStringList& params = QStringList());
+    Q_INVOKABLE void callEntityServerMethod(const QUuid& entityID,
+                                            const QString& method,
+                                            const QStringList& params = QStringList());
 
     /**jsdoc
      * Calls a method in a specific user's client entity script from a server entity script. The entity script method must be
@@ -682,8 +711,10 @@ public slots:
      *     Entities.callEntityServerMethod(serverEntityID, "entityMethod", [MyAvatar.sessionUUID, clientEntityID]);
      * }, 1000); // Wait for the entities to be created.
      */
-    Q_INVOKABLE void callEntityClientMethod(const QUuid& clientSessionID, const QUuid& entityID, const QString& method,
-        const QStringList& params = QStringList());
+    Q_INVOKABLE void callEntityClientMethod(const QUuid& clientSessionID,
+                                            const QUuid& entityID,
+                                            const QString& method,
+                                            const QStringList& params = QStringList());
 
     /**jsdoc
      * Finds the domain or avatar entity with a position closest to a specified point and within a specified radius.
@@ -767,8 +798,10 @@ public slots:
      * var entityIDs = Entities.findEntitiesByName("Light-Target", MyAvatar.position, 10, false);
      * print("Number of entities with the name Light-Target: " + entityIDs.length);
      */
-    Q_INVOKABLE QVector<QUuid> findEntitiesByName(const QString entityName, const glm::vec3& center, float radius,
-        bool caseSensitiveSearch = false) const;
+    Q_INVOKABLE QVector<QUuid> findEntitiesByName(const QString entityName,
+                                                  const glm::vec3& center,
+                                                  float radius,
+                                                  bool caseSensitiveSearch = false) const;
 
     /**jsdoc
      * Finds the first avatar or domain entity intersected by a {@link PickRay}. <code>Light</code> and <code>Zone</code> 
@@ -805,9 +838,12 @@ public slots:
     /// If the scripting context has visible entities, this will determine a ray intersection, the results
     /// may be inaccurate if the engine is unable to access the visible entities, in which case result.accurate
     /// will be false.
-    Q_INVOKABLE RayToEntityIntersectionResult findRayIntersection(const PickRay& ray, bool precisionPicking = false,
-            const QScriptValue& entityIdsToInclude = QScriptValue(), const QScriptValue& entityIdsToDiscard = QScriptValue(),
-            bool visibleOnly = false, bool collidableOnly = false) const;
+    Q_INVOKABLE RayToEntityIntersectionResult findRayIntersection(const PickRay& ray,
+                                                                  bool precisionPicking = false,
+                                                                  const QScriptValue& entityIdsToInclude = QScriptValue(),
+                                                                  const QScriptValue& entityIdsToDiscard = QScriptValue(),
+                                                                  bool visibleOnly = false,
+                                                                  bool collidableOnly = false) const;
 
     /**jsdoc
      * Reloads an entity's server entity script such that the latest version re-downloaded.
@@ -865,9 +901,10 @@ public slots:
      * @param {object} result - The metadata for the requested entity property if there was no error, otherwise
      *     <code>undefined</code>.
      */
-    Q_INVOKABLE bool queryPropertyMetadata(const QUuid& entityID, QScriptValue property, QScriptValue scopeOrCallback,
-        QScriptValue methodOrName = QScriptValue());
-
+    Q_INVOKABLE bool queryPropertyMetadata(const QUuid& entityID,
+                                           QScriptValue property,
+                                           QScriptValue scopeOrCallback,
+                                           QScriptValue methodOrName = QScriptValue());
 
     /**jsdoc
      * Sets whether or not ray picks intersect the bounding box of {@link Entities.EntityProperties-Light|Light} entities. By 
@@ -931,7 +968,6 @@ public slots:
     // FIXME move to a renderable entity interface
     Q_INVOKABLE bool getDrawZoneBoundaries() const;
 
-
     /**jsdoc
      * Sets the values of all voxels in a spherical portion of a {@link Entities.EntityProperties-PolyVox|PolyVox} entity.
      * @function Entities.setVoxelSphere
@@ -952,7 +988,7 @@ public slots:
      */
     // FIXME move to a renderable entity interface
     Q_INVOKABLE bool setVoxelSphere(const QUuid& entityID, const glm::vec3& center, float radius, int value);
-    
+
     /**jsdoc
      * Sets the values of all voxels in a capsule-shaped portion of a {@link Entities.EntityProperties-PolyVox|PolyVox} entity.
      * @function Entities.setVoxelCapsule
@@ -975,7 +1011,11 @@ public slots:
      * Entities.setVoxelCapsule(polyVox, startPosition, endPosition, 0.5, 255);
      */
     // FIXME move to a renderable entity interface
-    Q_INVOKABLE bool setVoxelCapsule(const QUuid& entityID, const glm::vec3& start, const glm::vec3& end, float radius, int value);
+    Q_INVOKABLE bool setVoxelCapsule(const QUuid& entityID,
+                                     const glm::vec3& start,
+                                     const glm::vec3& end,
+                                     float radius,
+                                     int value);
 
     /**jsdoc
      * Sets the value of a particular voxel in a {@link Entities.EntityProperties-PolyVox|PolyVox} entity.
@@ -1040,7 +1080,10 @@ public slots:
      * Entities.setVoxelsInCuboid(polyVox, cuboidPosition, cuboidSize, 0);
      */
     // FIXME move to a renderable entity interface
-    Q_INVOKABLE bool setVoxelsInCuboid(const QUuid& entityID, const glm::vec3& lowPosition, const glm::vec3& cuboidSize, int value);
+    Q_INVOKABLE bool setVoxelsInCuboid(const QUuid& entityID,
+                                       const glm::vec3& lowPosition,
+                                       const glm::vec3& cuboidSize,
+                                       int value);
 
     /**jsdoc
      * Converts voxel coordinates in a {@link Entities.EntityProperties-PolyVox|PolyVox} entity to world coordinates. Voxel 
@@ -1165,7 +1208,7 @@ public slots:
      * }, 2000);
      */
     Q_INVOKABLE bool setAllPoints(const QUuid& entityID, const QVector<glm::vec3>& points);
-    
+
     /**jsdoc
      * Appends a point to a {@link Entities.EntityProperties-Line|Line} entity.
      * @function Entities.appendPoint
@@ -1204,7 +1247,6 @@ public slots:
      * @function Entities.dumpTree
      */
     Q_INVOKABLE void dumpTree() const;
-
 
     /**jsdoc
      * Adds an action to an entity. An action is registered with the physics engine and is applied every physics simulation
@@ -1270,7 +1312,6 @@ public slots:
      */
     Q_INVOKABLE QVariantMap getActionArguments(const QUuid& entityID, const QUuid& actionID);
 
-
     /**jsdoc
      * Gets the translation of a joint in a {@link Entities.EntityProperties-Model|Model} entity relative to the entity's 
      * position and orientation.
@@ -1283,7 +1324,7 @@ public slots:
      */
     // FIXME move to a renderable entity interface
     Q_INVOKABLE glm::vec3 getAbsoluteJointTranslationInObjectFrame(const QUuid& entityID, int jointIndex);
-    
+
     /**jsdoc
      * Gets the index of the parent joint of a joint in a {@link Entities.EntityProperties-Model|Model} entity.
      * @function Entities.getJointParent
@@ -1292,7 +1333,7 @@ public slots:
      * @returns {number} The index of the parent joint if found, otherwise <code>-1</code>.
      */
     Q_INVOKABLE int getJointParent(const QUuid& entityID, int index);
-    
+
     /**jsdoc
      * Gets the translation of a joint in a {@link Entities.EntityProperties-Model|Model} entity relative to the entity's 
      * position and orientation.
@@ -1367,7 +1408,6 @@ public slots:
      */
     // FIXME move to a renderable entity interface
     Q_INVOKABLE bool setAbsoluteJointRotationInObjectFrame(const QUuid& entityID, int jointIndex, glm::quat rotation);
-
 
     /**jsdoc
      * Gets the local translation of a joint in a {@link Entities.EntityProperties-Model|Model} entity.
@@ -1448,7 +1488,6 @@ public slots:
     // FIXME move to a renderable entity interface
     Q_INVOKABLE bool setLocalJointRotation(const QUuid& entityID, int jointIndex, glm::quat rotation);
 
-
     /**jsdoc
      * Sets the local translations of joints in a {@link Entities.EntityProperties-Model|Model} entity.
      * @function Entities.setLocalJointTranslations
@@ -1520,7 +1559,6 @@ public slots:
                                         const QVector<glm::quat>& rotations,
                                         const QVector<glm::vec3>& translations);
 
-
     /**jsdoc
      * Gets the index of a named joint in a {@link Entities.EntityProperties-Model|Model} entity.
      * @function Entities.getJointIndex
@@ -1571,7 +1609,6 @@ public slots:
      */
     // FIXME move to a renderable entity interface
     Q_INVOKABLE QStringList getJointNames(const QUuid& entityID);
-
 
     /**jsdoc
      * Gets the IDs of entities and avatars that are directly parented to an entity or avatar model. To get all descendants, 
@@ -1856,8 +1893,11 @@ public slots:
      * @param {number} radius - The radius of the capsule.
      * @returns {boolean} <code>true</code> if the AA box and capsule intersect, otherwise <code>false</code>.
      */
-    Q_INVOKABLE bool AABoxIntersectsCapsule(const glm::vec3& low, const glm::vec3& dimensions,
-                                            const glm::vec3& start, const glm::vec3& end, float radius);
+    Q_INVOKABLE bool AABoxIntersectsCapsule(const glm::vec3& low,
+                                            const glm::vec3& dimensions,
+                                            const glm::vec3& start,
+                                            const glm::vec3& end,
+                                            float radius);
 
     /**jsdoc
      * Gets the meshes in a {@link Entities.EntityProperties-Model|Model} or {@link Entities.EntityProperties-PolyVox|PolyVox} 
@@ -1867,7 +1907,7 @@ public slots:
      * @param {Entities~getMeshesCallback} callback - The function to call upon completion.
      * @deprecated This function is deprecated and will be removed. Use the {@link Graphics} API instead.
      */
-     /**jsdoc
+    /**jsdoc
       * Called when a {@link Entities.getMeshes} call is complete.
       * @callback Entities~getMeshesCallback
       * @param {MeshProxy[]} meshes - If <code>success<</code> is <code>true</code>, a {@link MeshProxy} per mesh in the 
@@ -1942,7 +1982,6 @@ public slots:
      * print("Scale: " + JSON.stringify(Mat4.extractScale(transform)));  // { x: 1, y: 1, z: 1 }     */
     Q_INVOKABLE glm::mat4 getEntityLocalTransform(const QUuid& entityID);
 
-
     /**jsdoc
      * Converts a position in world coordinates to a position in an avatar, entity, or joint's local coordinates.
      * @function Entities.worldToLocalPosition
@@ -1977,8 +2016,10 @@ public slots:
      * localPosition = Entities.getEntityProperties(childEntity, "localPosition").localPosition;
      * print("Local position: " + JSON.stringify(localPosition));  // The same.
      */
-    Q_INVOKABLE glm::vec3 worldToLocalPosition(glm::vec3 worldPosition, const QUuid& parentID,
-                                               int parentJointIndex = -1, bool scalesWithParent = false);
+    Q_INVOKABLE glm::vec3 worldToLocalPosition(glm::vec3 worldPosition,
+                                               const QUuid& parentID,
+                                               int parentJointIndex = -1,
+                                               bool scalesWithParent = false);
     /**jsdoc
      * Converts a rotation or orientation in world coordinates to rotation in an avatar, entity, or joint's local coordinates.
      * @function Entities.worldToLocalRotation
@@ -1989,8 +2030,10 @@ public slots:
      * @param {boolean} [scalesWithParent=false] - <em>Not used in the calculation.</em>
      * @returns {Quat} The rotation converted to local coordinates if successful, otherwise {@link Quat(0)|Quat.IDENTITY}.
      */
-    Q_INVOKABLE glm::quat worldToLocalRotation(glm::quat worldRotation, const QUuid& parentID,
-                                               int parentJointIndex = -1, bool scalesWithParent = false);
+    Q_INVOKABLE glm::quat worldToLocalRotation(glm::quat worldRotation,
+                                               const QUuid& parentID,
+                                               int parentJointIndex = -1,
+                                               bool scalesWithParent = false);
     /**jsdoc
      * Converts a velocity in world coordinates to a velocity in an avatar, entity, or joint's local coordinates.
      * @function Entities.worldToLocalVelocity
@@ -2002,8 +2045,10 @@ public slots:
      *     <code>false</code> for the local velocity to be at world scale.
      * @returns {Vec3} The velocity converted to local coordinates if successful, otherwise {@link Vec3(0)|Vec3.ZERO}.
      */
-    Q_INVOKABLE glm::vec3 worldToLocalVelocity(glm::vec3 worldVelocity, const QUuid& parentID,
-                                               int parentJointIndex = -1, bool scalesWithParent = false);
+    Q_INVOKABLE glm::vec3 worldToLocalVelocity(glm::vec3 worldVelocity,
+                                               const QUuid& parentID,
+                                               int parentJointIndex = -1,
+                                               bool scalesWithParent = false);
     /**jsdoc
      * Converts a Euler angular velocity in world coordinates to an angular velocity in an avatar, entity, or joint's local 
      * coordinates.
@@ -2016,8 +2061,10 @@ public slots:
      * @param {boolean} [scalesWithParent=false] - <em>Not used in the calculation.</em>
      * @returns {Vec3} The angular velocity converted to local coordinates if successful, otherwise {@link Vec3(0)|Vec3.ZERO}.
      */
-    Q_INVOKABLE glm::vec3 worldToLocalAngularVelocity(glm::vec3 worldAngularVelocity, const QUuid& parentID,
-                                                      int parentJointIndex = -1, bool scalesWithParent = false);
+    Q_INVOKABLE glm::vec3 worldToLocalAngularVelocity(glm::vec3 worldAngularVelocity,
+                                                      const QUuid& parentID,
+                                                      int parentJointIndex = -1,
+                                                      bool scalesWithParent = false);
     /**jsdoc
      * Converts dimensions in world coordinates to dimensions in an avatar or entity's local coordinates.
      * @function Entities.worldToLocalDimensions
@@ -2028,8 +2075,10 @@ public slots:
      *     <code>false</code> for the local dimensions to be at world scale.
      * @returns {Vec3} The dimensions converted to local coordinates if successful, otherwise {@link Vec3(0)|Vec3.ZERO}.
      */
-    Q_INVOKABLE glm::vec3 worldToLocalDimensions(glm::vec3 worldDimensions, const QUuid& parentID,
-                                                 int parentJointIndex = -1, bool scalesWithParent = false);
+    Q_INVOKABLE glm::vec3 worldToLocalDimensions(glm::vec3 worldDimensions,
+                                                 const QUuid& parentID,
+                                                 int parentJointIndex = -1,
+                                                 bool scalesWithParent = false);
     /**jsdoc
      * Converts a position in an avatar, entity, or joint's local coordinate to a position in world coordinates.
      * @function Entities.localToWorldPosition
@@ -2041,8 +2090,10 @@ public slots:
      *     <code>false</code> if the local dimensions are at world scale.
      * @returns {Vec3} The position converted to world coordinates if successful, otherwise {@link Vec3(0)|Vec3.ZERO}.
      */
-    Q_INVOKABLE glm::vec3 localToWorldPosition(glm::vec3 localPosition, const QUuid& parentID,
-                                               int parentJointIndex = -1, bool scalesWithParent = false);
+    Q_INVOKABLE glm::vec3 localToWorldPosition(glm::vec3 localPosition,
+                                               const QUuid& parentID,
+                                               int parentJointIndex = -1,
+                                               bool scalesWithParent = false);
     /**jsdoc
      * Converts a rotation or orientation in an avatar, entity, or joint's local coordinate to a rotation in world coordinates.
      * @function Entities.localToWorldRotation
@@ -2053,8 +2104,10 @@ public slots:
      * @param {boolean} [scalesWithParent= false] - <em>Not used in the calculation.</em>
      * @returns {Quat} The rotation converted to local coordinates if successful, otherwise {@link Quat(0)|Quat.IDENTITY}.
      */
-    Q_INVOKABLE glm::quat localToWorldRotation(glm::quat localRotation, const QUuid& parentID,
-                                               int parentJointIndex = -1, bool scalesWithParent = false);
+    Q_INVOKABLE glm::quat localToWorldRotation(glm::quat localRotation,
+                                               const QUuid& parentID,
+                                               int parentJointIndex = -1,
+                                               bool scalesWithParent = false);
     /**jsdoc
      * Converts a velocity in an avatar, entity, or joint's local coordinate to a velocity in world coordinates.
      * @function Entities.localToWorldVelocity
@@ -2066,8 +2119,10 @@ public slots:
      *     <code>false</code> if the local velocity is at world scale.
      * @returns {Vec3} The velocity converted to world coordinates it successful, otherwise {@link Vec3(0)|Vec3.ZERO}.
      */
-    Q_INVOKABLE glm::vec3 localToWorldVelocity(glm::vec3 localVelocity, const QUuid& parentID,
-                                               int parentJointIndex = -1, bool scalesWithParent = false);
+    Q_INVOKABLE glm::vec3 localToWorldVelocity(glm::vec3 localVelocity,
+                                               const QUuid& parentID,
+                                               int parentJointIndex = -1,
+                                               bool scalesWithParent = false);
     /**jsdoc
      * Converts a Euler angular velocity in an avatar, entity, or joint's local coordinate to an angular velocity in world 
      * coordinates.
@@ -2080,8 +2135,10 @@ public slots:
      * @param {boolean} [scalesWithParent= false] - <em>Not used in the calculation.</em>
      * @returns {Vec3} The angular velocity converted to world coordinates if successful, otherwise {@link Vec3(0)|Vec3.ZERO}.
      */
-    Q_INVOKABLE glm::vec3 localToWorldAngularVelocity(glm::vec3 localAngularVelocity, const QUuid& parentID,
-                                                      int parentJointIndex = -1, bool scalesWithParent = false);
+    Q_INVOKABLE glm::vec3 localToWorldAngularVelocity(glm::vec3 localAngularVelocity,
+                                                      const QUuid& parentID,
+                                                      int parentJointIndex = -1,
+                                                      bool scalesWithParent = false);
     /**jsdoc
      * Converts dimensions in an avatar or entity's local coordinates to dimensions in world coordinates.
      * @function Entities.localToWorldDimensions
@@ -2092,9 +2149,10 @@ public slots:
      *     scale, <code>false</code> if the local dimensions are at world scale.
      * @returns {Vec3} The dimensions converted to world coordinates if successful, otherwise {@link Vec3(0)|Vec3.ZERO}.
      */
-    Q_INVOKABLE glm::vec3 localToWorldDimensions(glm::vec3 localDimensions, const QUuid& parentID,
-                                                 int parentJointIndex = -1, bool scalesWithParent = false);
-
+    Q_INVOKABLE glm::vec3 localToWorldDimensions(glm::vec3 localDimensions,
+                                                 const QUuid& parentID,
+                                                 int parentJointIndex = -1,
+                                                 bool scalesWithParent = false);
 
     /**jsdoc
      * Gets the static certificate for an entity. The static certificate contains static properties of the item which cannot
@@ -2239,7 +2297,6 @@ signals:
      */
     void canGetAndSetPrivateUserDataChanged(bool canGetAndSetPrivateUserData);
 
-
     /**jsdoc
      * Triggered when a mouse button is clicked while the mouse cursor is on an entity, or a controller trigger is fully 
      * pressed while its laser is on an entity.
@@ -2302,7 +2359,6 @@ signals:
      * @returns {Signal}
      */
     void mouseDoublePressOffEntity();
-
 
     /**jsdoc
      * Triggered when a mouse button is clicked while the mouse cursor is on an entity. Note: Not triggered by controllers.
@@ -2389,7 +2445,6 @@ signals:
      */
     void hoverLeaveEntity(const EntityItemID& entityItemID, const PointerEvent& event);
 
-
     /**jsdoc
      * Triggered when an avatar enters an entity, but only if the entity has an entity method exposed for this event.
      * <p>See also, {@link Entities|Entity Methods} and {@link Script.addEventHandler}.</p>
@@ -2407,7 +2462,6 @@ signals:
      * @returns {Signal}
      */
     void leaveEntity(const EntityItemID& entityItemID);
-
 
     /**jsdoc
      * Triggered when an entity is deleted.
@@ -2471,7 +2525,7 @@ signals:
      * });
      */
     void clearingEntities();
-    
+
     /**jsdoc
      * Triggered when a script in a {@link Entities.EntityProperties-Web|Web} entity's HTML sends an event over the entity's 
      * HTML event bridge. The HTML web page can send a message by calling:
@@ -2507,23 +2561,28 @@ private:
     EntityItemPointer checkForTreeEntityAndTypeMatch(const QUuid& entityID,
                                                      EntityTypes::EntityType entityType = EntityTypes::Unknown);
 
-
     /// actually does the work of finding the ray intersection, can be called in locking mode or tryLock mode
-    RayToEntityIntersectionResult evalRayIntersectionWorker(const PickRay& ray, Octree::lockType lockType,
-        PickFilter searchFilter, const QVector<EntityItemID>& entityIdsToInclude, const QVector<EntityItemID>& entityIdsToDiscard) const;
+    RayToEntityIntersectionResult evalRayIntersectionWorker(const PickRay& ray,
+                                                            Octree::lockType lockType,
+                                                            PickFilter searchFilter,
+                                                            const QVector<EntityItemID>& entityIdsToInclude,
+                                                            const QVector<EntityItemID>& entityIdsToDiscard) const;
 
     /// actually does the work of finding the parabola intersection, can be called in locking mode or tryLock mode
-    ParabolaToEntityIntersectionResult evalParabolaIntersectionWorker(const PickParabola& parabola, Octree::lockType lockType,
-        PickFilter searchFilter, const QVector<EntityItemID>& entityIdsToInclude, const QVector<EntityItemID>& entityIdsToDiscard) const;
+    ParabolaToEntityIntersectionResult evalParabolaIntersectionWorker(const PickParabola& parabola,
+                                                                      Octree::lockType lockType,
+                                                                      PickFilter searchFilter,
+                                                                      const QVector<EntityItemID>& entityIdsToInclude,
+                                                                      const QVector<EntityItemID>& entityIdsToDiscard) const;
 
     EntityTreePointer _entityTree;
 
     std::recursive_mutex _entitiesScriptEngineLock;
     QSharedPointer<EntitiesScriptEngineProvider> _entitiesScriptEngine;
 
-    bool _bidOnSimulationOwnership { false };
+    bool _bidOnSimulationOwnership{ false };
 
     ActivityTracking _activityTracking;
 };
 
-#endif // hifi_EntityScriptingInterface_h
+#endif  // hifi_EntityScriptingInterface_h
