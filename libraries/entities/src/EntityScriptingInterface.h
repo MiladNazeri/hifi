@@ -548,7 +548,7 @@ public slots:
     Q_INVOKABLE QSizeF textSize(const QUuid& id, const QString& text);
 
     /**jsdoc
-    * Calculates the size of some text in a {@link Entities.EntityProperties-Text|Text} entity without needing an entity made first. 
+    * Calculates the size text given a string and the line height. 
     * @function Entities.computeStringDimensions
     * @param {string} text - The string to calculate the size of.
     * @param {number} lineHeight - The line height the entity will be set at
