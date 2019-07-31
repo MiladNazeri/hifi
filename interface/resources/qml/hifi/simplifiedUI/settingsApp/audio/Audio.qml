@@ -93,7 +93,7 @@ Flickable {
                 to: 20.0
                 defaultValue: 0.0
                 stepSize: 5.0
-                value: Settings.getValue("simplifiedUI/audioSettings/peopleVolume", AudioScriptingInterface.avatarGain);
+                value: Settings.getValue("simplifiedUI/audioSettings/peopleVolume", AudioScriptingInterface.avatarGain)
                 live: true
                 function updatePeopleGain(sliderValue) {
                     if (AudioScriptingInterface.avatarGain !== sliderValue) {
@@ -121,7 +121,7 @@ Flickable {
                 to: 20.0
                 defaultValue: 0.0
                 stepSize: 5.0
-                value: Settings.getValue("simplifiedUI/audioSettings/environmentVolume", AudioScriptingInterface.serverInjectorGain);
+                value: Settings.getValue("simplifiedUI/audioSettings/environmentVolume", AudioScriptingInterface.serverInjectorGain)
                 live: true
                 function updateEnvironmentGain(sliderValue) {
                     if (AudioScriptingInterface.serverInjectorGain !== sliderValue) {
@@ -150,7 +150,7 @@ Flickable {
                 to: 20.0
                 defaultValue: 0.0
                 stepSize: 5.0
-                value: Settings.getValue("simplifiedUI/audioSettings/uiFXVolume", AudioScriptingInterface.systemInjectorGain);
+                value: Settings.getValue("simplifiedUI/audioSettings/uiFXVolume", AudioScriptingInterface.systemInjectorGain)
                 live: true
                 function updateSystemGain(sliderValue) {
                     if (AudioScriptingInterface.systemInjectorGain !== sliderValue) {

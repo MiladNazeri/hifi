@@ -70,12 +70,14 @@ function onReceivedFirstPacket() {
     Audio.systemInjectorGain = Settings.getValue("simplifiedUI/audioSettings/uiFXVolume", Audio.systemInjectorGain);
 }
 
+
 runDefaultsTogether();
 loadSeparateDefaults();
 
 function shutdown() {
     Audio.receivedFirstPacket.disconnect(onReceivedFirstPacket);
 }
+
 
 Script.scriptEnding.connect(shutdown);
 
