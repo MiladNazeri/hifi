@@ -130,7 +130,7 @@ function onMessageFromSettingsApp(message) {
         case "handleAvatarNametagMode":
             handleAvatarNametagMode(message.avatarNametagMode);
             break;
-            
+        
         default:
             console.log("Unrecognized message from " + SETTINGS_APP_MESSAGE_SOURCE + ": " + JSON.stringify(message));
             break;
@@ -580,6 +580,7 @@ function startup() {
     Audio.mutedDesktopChanged.connect(onDesktopInputDeviceMutedChanged);
     Window.geometryChanged.connect(onGeometryChanged);
     HMD.displayModeChanged.connect(onDisplayModeChanged);
+    Audio.receivedFirstPacket.connect(onReceivedFirstPacket);
     Audio.avatarGainChanged.connect(maybeUpdateOutputDeviceMutedOverlay);
     Audio.localInjectorGainChanged.connect(maybeUpdateOutputDeviceMutedOverlay);
     Audio.serverInjectorGainChanged.connect(maybeUpdateOutputDeviceMutedOverlay);
