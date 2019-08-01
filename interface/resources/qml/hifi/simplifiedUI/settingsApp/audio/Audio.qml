@@ -93,7 +93,7 @@ Flickable {
                 to: 20.0
                 defaultValue: 0.0
                 stepSize: 5.0
-                value: Settings.getValue("audioSettings/peopleVolume", AudioScriptingInterface.avatarGain)
+                value: 0.0
                 live: true
                 function updatePeopleGain(sliderValue) {
                     if (AudioScriptingInterface.avatarGain !== sliderValue) {
@@ -109,6 +109,9 @@ Flickable {
                         updatePeopleGain(value);
                     }
                 }
+                Component.onCompleted: {
+                    value = Settings.getValue("audioSettings/peopleVolume", AudioScriptingInterface.avatarGain);
+                }
             }
 
             SimplifiedControls.Slider {
@@ -121,7 +124,7 @@ Flickable {
                 to: 20.0
                 defaultValue: 0.0
                 stepSize: 5.0
-                value: Settings.getValue("audioSettings/environmentVolume", AudioScriptingInterface.serverInjectorGain)
+                value: 0.0
                 live: true
                 function updateEnvironmentGain(sliderValue) {
                     if (AudioScriptingInterface.serverInjectorGain !== sliderValue) {
@@ -138,6 +141,9 @@ Flickable {
                         updateEnvironmentGain(value);
                     }
                 }
+                Component.onCompleted: {
+                    value = Settings.getValue("audioSettings/environmentVolume", AudioScriptingInterface.serverInjectorGain);
+                }
             }
 
             SimplifiedControls.Slider {
@@ -150,7 +156,7 @@ Flickable {
                 to: 20.0
                 defaultValue: 0.0
                 stepSize: 5.0
-                value: Settings.getValue("audioSettings/uiFXVolume", AudioScriptingInterface.systemInjectorGain)
+                value: 0.0
                 live: true
                 function updateSystemGain(sliderValue) {
                     if (AudioScriptingInterface.systemInjectorGain !== sliderValue) {
@@ -165,6 +171,9 @@ Flickable {
                     if (!pressed) {
                         updateSystemGain(value);
                     }
+                }
+                Component.onCompleted: {
+                    value = Settings.getValue("audioSettings/uiFXVolume", AudioScriptingInterface.systemInjectorGain);
                 }
             }
         }

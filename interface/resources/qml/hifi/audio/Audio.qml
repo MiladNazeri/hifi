@@ -524,7 +524,7 @@ Rectangle {
                 minimumValue: -60.0
                 maximumValue: 20.0
                 stepSize: 5
-                value: Settings.getValue("audioSettings/peopleVolume", AudioScriptingInterface.avatarGain)
+                value: 0.0
                 onValueChanged: {
                     updateMyAvatarGainFromQML(value, false);
                 }
@@ -532,6 +532,10 @@ Rectangle {
                     if (!pressed) {
                         updateMyAvatarGainFromQML(value, false);
                     }
+                }
+
+                Component.onCompleted: {
+                    value = Settings.getValue("audioSettings/peopleVolume", AudioScriptingInterface.avatarGain);
                 }
 
                 MouseArea {
@@ -586,7 +590,7 @@ Rectangle {
                 minimumValue: -60.0
                 maximumValue: 20.0
                 stepSize: 5
-                value: Settings.getValue("audioSettings/environmentVolume", AudioScriptingInterface.serverInjectorGain)
+                value: 0.0
                 onValueChanged: {
                     updateInjectorGainFromQML(value, false);
                 }
@@ -594,6 +598,10 @@ Rectangle {
                     if (!pressed) {
                         updateInjectorGainFromQML(value, false);
                     }
+                }
+                
+                Component.onCompleted: {
+                    value = Settings.getValue("audioSettings/environmentVolume", AudioScriptingInterface.serverInjectorGain);
                 }
 
                 MouseArea {
@@ -647,7 +655,7 @@ Rectangle {
                 minimumValue: -60.0
                 maximumValue: 20.0
                 stepSize: 5
-                value: Settings.getValue("audioSettings/uiFXVolume", AudioScriptingInterface.systemInjectorGain)
+                value: 0.0
                 onValueChanged: {
                     updateSystemInjectorGainFromQML(value, false);
                 }
@@ -655,6 +663,10 @@ Rectangle {
                     if (!pressed) {
                         updateSystemInjectorGainFromQML(value, false);
                     }
+                }
+
+                Component.onCompleted: {
+                    value = Settings.getValue("audioSettings/uiFXVolume", AudioScriptingInterface.systemInjectorGain);
                 }
 
                 MouseArea {
