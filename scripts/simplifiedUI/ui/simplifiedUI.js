@@ -20,6 +20,12 @@ var TOOLBAR_NAME = "com.highfidelity.interface.toolbar.system";
 var DEFAULT_SCRIPTS_PATH_PREFIX = ScriptDiscoveryService.defaultScriptsPath + "/";
 // END CONFIG OPTIONS
 
+// START AUDIO GAIN INIT
+Audio.avatarGain = Settings.getValue("simplifiedUI/audioSettings/peopleVolume", Audio.avatarGain);
+Audio.serverInjectorGain = Settings.getValue("simplifiedUI/audioSettings/environmentVolume", Audio.serverInjectorGain);
+Audio.localInjectorGain = Settings.getValue("simplifiedUI/audioSettings/environmentVolume", Audio.localInjectorGain);
+Audio.systemInjectorGain = Settings.getValue("simplifiedUI/audioSettings/uiFXVolume", Audio.systemInjectorGain);
+// END AUDIO GAIN INIT
 
 var MENU_NAMES = ["File", "Edit", "Display", "View", "Navigate", "Settings", "Developer", "Help"];
 var keepMenusSetting = Settings.getValue("simplifiedUI/keepMenus", false);
@@ -580,7 +586,6 @@ function startup() {
     Audio.mutedDesktopChanged.connect(onDesktopInputDeviceMutedChanged);
     Window.geometryChanged.connect(onGeometryChanged);
     HMD.displayModeChanged.connect(onDisplayModeChanged);
-    Audio.receivedFirstPacket.connect(onReceivedFirstPacket);
     Audio.avatarGainChanged.connect(maybeUpdateOutputDeviceMutedOverlay);
     Audio.localInjectorGainChanged.connect(maybeUpdateOutputDeviceMutedOverlay);
     Audio.serverInjectorGainChanged.connect(maybeUpdateOutputDeviceMutedOverlay);

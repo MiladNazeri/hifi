@@ -62,23 +62,5 @@ function runDefaultsTogether() {
 }
 
 
-Audio.receivedFirstPacket.connect(onReceivedFirstPacket);
-function onReceivedFirstPacket() {
-    Audio.avatarGain = Settings.getValue("simplifiedUI/audioSettings/peopleVolume", Audio.avatarGain);
-    Audio.serverInjectorGain = Settings.getValue("simplifiedUI/audioSettings/environmentVolume", Audio.serverInjectorGain);
-    Audio.localInjectorGain = Settings.getValue("simplifiedUI/audioSettings/environmentVolume", Audio.localInjectorGain);
-    Audio.systemInjectorGain = Settings.getValue("simplifiedUI/audioSettings/uiFXVolume", Audio.systemInjectorGain);
-}
-
-
 runDefaultsTogether();
 loadSeparateDefaults();
-
-function shutdown() {
-    Audio.receivedFirstPacket.disconnect(onReceivedFirstPacket);
-}
-
-
-Script.scriptEnding.connect(shutdown);
-
-
