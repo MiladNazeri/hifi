@@ -93,12 +93,12 @@ Flickable {
                 to: 20.0
                 defaultValue: 0.0
                 stepSize: 5.0
-                value: Settings.getValue("simplifiedUI/audioSettings/peopleVolume", AudioScriptingInterface.avatarGain)
+                value: Settings.getValue("audioSettings/peopleVolume", AudioScriptingInterface.avatarGain)
                 live: true
                 function updatePeopleGain(sliderValue) {
                     if (AudioScriptingInterface.avatarGain !== sliderValue) {
                         AudioScriptingInterface.avatarGain = sliderValue;
-                        Settings.setValue("simplifiedUI/audioSettings/peopleVolume", sliderValue);
+                        Settings.setValue("audioSettings/peopleVolume", sliderValue);
                     }
                 }
                 onValueChanged: {
@@ -121,13 +121,13 @@ Flickable {
                 to: 20.0
                 defaultValue: 0.0
                 stepSize: 5.0
-                value: Settings.getValue("simplifiedUI/audioSettings/environmentVolume", AudioScriptingInterface.serverInjectorGain)
+                value: Settings.getValue("audioSettings/environmentVolume", AudioScriptingInterface.serverInjectorGain)
                 live: true
                 function updateEnvironmentGain(sliderValue) {
                     if (AudioScriptingInterface.serverInjectorGain !== sliderValue) {
                         AudioScriptingInterface.serverInjectorGain = sliderValue;
                         AudioScriptingInterface.localInjectorGain = sliderValue;
-                        Settings.setValue("simplifiedUI/audioSettings/environmentVolume", sliderValue);
+                        Settings.setValue("audioSettings/environmentVolume", sliderValue);
                     }
                 }
                 onValueChanged: {
@@ -150,12 +150,12 @@ Flickable {
                 to: 20.0
                 defaultValue: 0.0
                 stepSize: 5.0
-                value: Settings.getValue("simplifiedUI/audioSettings/uiFXVolume", AudioScriptingInterface.systemInjectorGain)
+                value: Settings.getValue("audioSettings/uiFXVolume", AudioScriptingInterface.systemInjectorGain)
                 live: true
                 function updateSystemGain(sliderValue) {
                     if (AudioScriptingInterface.systemInjectorGain !== sliderValue) {
                         AudioScriptingInterface.systemInjectorGain = sliderValue;
-                        Settings.setValue("simplifiedUI/audioSettings/uiFXVolume", sliderValue);
+                        Settings.setValue("audioSettings/uiFXVolume", sliderValue);
                     }
                 }
                 onValueChanged: {

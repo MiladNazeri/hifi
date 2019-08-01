@@ -123,3 +123,6 @@ Script.scriptEnding.connect(function() {
 });
 
 Menu.menuItemEvent.connect(menuItemEvent);
+
+// Init audio levels
+Script.require("./modules/initAudioGainLevels.js")();

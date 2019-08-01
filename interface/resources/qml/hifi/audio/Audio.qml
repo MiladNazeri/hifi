@@ -91,20 +91,20 @@ Rectangle {
     function updateMyAvatarGainFromQML(sliderValue, isReleased) {
         if (AudioScriptingInterface.getAvatarGain() != sliderValue) {
             AudioScriptingInterface.setAvatarGain(sliderValue);
-            Settings.setValue("simplifiedUI/audioSettings/peopleVolume", sliderValue);
+            Settings.setValue("audioSettings/peopleVolume", sliderValue);
         }
     }
     function updateInjectorGainFromQML(sliderValue, isReleased) {
         if (AudioScriptingInterface.getInjectorGain() != sliderValue) {
             AudioScriptingInterface.setInjectorGain(sliderValue);       // server side
             AudioScriptingInterface.setLocalInjectorGain(sliderValue);  // client side
-            Settings.setValue("simplifiedUI/audioSettings/environmentVolume", sliderValue);
+            Settings.setValue("audioSettings/environmentVolume", sliderValue);
         }
     }
     function updateSystemInjectorGainFromQML(sliderValue, isReleased) {
         if (AudioScriptingInterface.getSystemInjectorGain() != sliderValue) {
             AudioScriptingInterface.setSystemInjectorGain(sliderValue);
-            Settings.setValue("simplifiedUI/audioSettings/uiFXVolume", sliderValue);
+            Settings.setValue("audioSettings/uiFXVolume", sliderValue);
         }
     }
 
@@ -508,7 +508,7 @@ Rectangle {
                 minimumValue: -60.0
                 maximumValue: 20.0
                 stepSize: 5
-                value: Settings.getValue("simplifiedUI/audioSettings/peopleVolume", AudioScriptingInterface.avatarGain)
+                value: Settings.getValue("audioSettings/peopleVolume", AudioScriptingInterface.avatarGain)
                 onValueChanged: {
                     updateMyAvatarGainFromQML(value, false);
                 }
@@ -570,7 +570,7 @@ Rectangle {
                 minimumValue: -60.0
                 maximumValue: 20.0
                 stepSize: 5
-                value: Settings.getValue("simplifiedUI/audioSettings/environmentVolume", AudioScriptingInterface.serverInjectorGain)
+                value: Settings.getValue("audioSettings/environmentVolume", AudioScriptingInterface.serverInjectorGain)
                 onValueChanged: {
                     updateInjectorGainFromQML(value, false);
                 }
@@ -631,7 +631,7 @@ Rectangle {
                 minimumValue: -60.0
                 maximumValue: 20.0
                 stepSize: 5
-                value: Settings.getValue("simplifiedUI/audioSettings/uiFXVolume", AudioScriptingInterface.systemInjectorGain)
+                value: Settings.getValue("audioSettings/uiFXVolume", AudioScriptingInterface.systemInjectorGain)
                 onValueChanged: {
                     updateSystemInjectorGainFromQML(value, false);
                 }
