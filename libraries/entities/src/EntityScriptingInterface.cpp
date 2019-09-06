@@ -994,6 +994,14 @@ void EntityScriptingInterface::deleteEntity(const QUuid& id) {
                         if (entity->isAvatarEntity() && getEntityPacketSender()->getMyAvatar()) {
                             getEntityPacketSender()->getMyAvatar()->clearAvatarEntity(entityID, false);
                         }
+                    } else if (entity->isDomainEntity() && getChildrenIDs(entityID).length() > 0) {
+                        QVector<QUuid> childrenIDs = getChildrenIDs(entityID);
+                        for (int i = 0; i < childrenIDs.length(); ++i) {
+                            EntityItemPointer childEntity = _entityTree->findEntityByEntityItemID(childrenIDs[i]);
+                            if (!childEntity->isDomainEntity()) {
+                                _entityTree->deleteEntity(childrenIDs[i]);
+                            }
+                        }
                     }
                 }
             }
