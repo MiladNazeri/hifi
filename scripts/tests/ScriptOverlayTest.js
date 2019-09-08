@@ -20,7 +20,6 @@ function addOverlayEnt() {
             grabbable: false
         },
         dynamic: false,
-        position: MyAvatar.position,
         parentID: mainEnt,
         imageURL: SITTABLE_IMAGE_URL_DESKTOP,
         visible: true,
