@@ -1021,7 +1021,6 @@ void EntityScriptingInterface::deleteEntity(const QUuid& id) {
                                 }
                             }
                         }
-
                     }
                 }
             }
