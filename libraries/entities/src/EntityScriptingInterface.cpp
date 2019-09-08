@@ -988,7 +988,6 @@ void EntityScriptingInterface::deleteEntity(const QUuid& id) {
 
     // If we have a local entity tree set, then also update it.
     if (_entityTree) {
-        EntityItemPointer entity = _entityTree->findEntityByEntityItemID(entityID);
         _entityTree->withWriteLock([&] {
             EntityItemPointer entity = _entityTree->findEntityByEntityItemID(entityID);
             if (entity) {
