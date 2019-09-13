@@ -1958,8 +1958,7 @@ void Rig::updateReactions(const ControllerParameters& params) {
 
         bool isSeated = _state == RigRole::Seated;
         bool hipsEnabled = params.primaryControllerFlags[PrimaryControllerType_Hips] & (uint8_t)ControllerFlags::Enabled;
-        bool hipsEstimated = params.primaryControllerFlags[PrimaryControllerType_Hips] & (uint8_t)ControllerFlags::Estimated;
-        bool hmdMode = hipsEnabled && !hipsEstimated;
+        bool hmdMode = hipsEnabled;
 
         if ((reactionPlaying || isSeated) && !hmdMode) {
             // TODO: make this smooth.
@@ -2117,7 +2116,7 @@ void Rig::updateFromControllerParameters(const ControllerParameters& params, flo
     _previousIsTalking = params.isTalking;
 
     const float TOTAL_EASE_IN_TIME = 0.75f;
-    const float TOTAL_EASE_OUT_TIME = 1.5f;
+    const float TOTAL_EASE_OUT_TIME = 0.75f;
     if (params.isTalking) {
         if (_talkIdleInterpTime < 1.0f) {
             _talkIdleInterpTime += dt / TOTAL_EASE_IN_TIME;
