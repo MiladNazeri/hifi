@@ -961,23 +961,6 @@ QUuid EntityScriptingInterface::editEntity(const QUuid& id, const EntityItemProp
     return id;
 }
 
-void getChildrenIDsHelper(QVector<QUuid>& result, const QUuid& parentID) {
-        QSharedPointer<SpatialParentFinder> parentFinder = DependencyManager::get<SpatialParentFinder>();
-        if (!parentFinder) {
-            return;
-        }
-        bool success;
-        SpatiallyNestableWeakPointer parentWP = parentFinder->find(parentID, success);
-        if (!success) {
-            return;
-        }
-        SpatiallyNestablePointer parent = parentWP.lock();
-        if (!parent) {
-            return;
-        }
-        parent->forEachChild([&](SpatiallyNestablePointer child) { result.push_back(child->getID()); });
-}
-
 void EntityScriptingInterface::deleteEntity(const QUuid& id) {
     PROFILE_RANGE(script_entities, __FUNCTION__);
 
@@ -1010,17 +993,15 @@ void EntityScriptingInterface::deleteEntity(const QUuid& id) {
                         if (entity->isAvatarEntity() && getEntityPacketSender()->getMyAvatar()) {
                             getEntityPacketSender()->getMyAvatar()->clearAvatarEntity(entityID, false);
                         }
+                    // Check to see if a domain entity has local entity as children to make sure they are also deleted
                     } else if (entity->isDomainEntity()) {
-                        QVector<QUuid> childrenIDs;
-                        getChildrenIDsHelper(childrenIDs, id);
-                        if (childrenIDs.length() > 0) {
-                            for (int i = 0; i < childrenIDs.length(); ++i) {
-                                EntityItemPointer childEntity = _entityTree->findEntityByEntityItemID(childrenIDs[i]);
-                                if (!childEntity->isDomainEntity()) {
-                                    _entityTree->deleteEntity(childrenIDs[i]);
-                                }
+                        entity->forEachChild([&](SpatiallyNestablePointer child) {
+                            QUuid childID = child->getID();
+                            EntityItemPointer childEntity = _entityTree->findEntityByEntityItemID(childID);
+                            if (!childEntity->isDomainEntity()) {
+                                _entityTree->deleteEntity(childID);
                             }
-                        }
+                        });
                     }
                 }
             }
@@ -2080,7 +2061,20 @@ QVector<QUuid> EntityScriptingInterface::getChildrenIDs(const QUuid& parentID) {
         return result;
     }
     _entityTree->withReadLock([&] { 
-        getChildrenIDsHelper(result, parentID);
+        QSharedPointer<SpatialParentFinder> parentFinder = DependencyManager::get<SpatialParentFinder>();
+        if (!parentFinder) {
+            return;
+        }
+        bool success;
+        SpatiallyNestableWeakPointer parentWP = parentFinder->find(parentID, success);
+        if (!success) {
+            return;
+        }
+        SpatiallyNestablePointer parent = parentWP.lock();
+        if (!parent) {
+            return;
+        }
+        parent->forEachChild([&](SpatiallyNestablePointer child) { result.push_back(child->getID()); });
     });
     return result;
 }
