@@ -58,8 +58,7 @@ Rectangle {
             console.log("\n\n ##topBarInventoryModel.count > 0 \n\n", topBarInventoryModel.count > 0)
             console.log("\n\n FULL STATEMENT CHECK", 
             (MyAvatar.skeletonModelURL.indexOf("defaultAvatar") > -1 || MyAvatar.skeletonModelURL.indexOf("fst") === -1) &&
-                topBarInventoryModel.count > 0)wa
-
+                topBarInventoryModel.count > 0)
             if ((MyAvatar.skeletonModelURL.indexOf("defaultAvatar") > -1 || MyAvatar.skeletonModelURL.indexOf("fst") === -1) &&
                 topBarInventoryModel.count > 0) {
                 Settings.setValue("simplifiedUI/alreadyAutoSelectedAvatar", true);
