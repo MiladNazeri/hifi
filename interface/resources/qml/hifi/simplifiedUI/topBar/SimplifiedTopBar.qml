@@ -52,7 +52,7 @@ Rectangle {
         onSkeletonModelURLChanged: {
             console.log("\n\n ##SKELETON MODEL URL CHANGED \n\n");
             root.updatePreviewUrl();
-
+            console.log("\n\n ##MyAvatar.skeletonModelURL:", MyAvatar.skeletonModelURL);
             console.log("\n\n ##MyAvatar.skeletonModelURL.indexOf('defaultAvatar') \n\n", MyAvatar.skeletonModelURL.indexOf("defaultAvatar"))
             console.log("\n\n ##MyAvatar.skeletonModelURL.indexOf(`fst`) \n\n", MyAvatar.skeletonModelURL.indexOf("fst"))
             console.log("\n\n ##topBarInventoryModel.count > 0 \n\n", topBarInventoryModel.count > 0)
