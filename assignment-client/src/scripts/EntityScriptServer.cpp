@@ -27,6 +27,7 @@
 #include <ResourceScriptingInterface.h>
 #include <ScriptCache.h>
 #include <ScriptEngines.h>
+#include <AvatarManager.h>
 #include <SoundCacheScriptingInterface.h>
 #include <UUID.h>
 #include <WebSocketServerClass.h>
@@ -76,6 +77,8 @@ EntityScriptServer::EntityScriptServer(ReceivedMessage& message) : ThreadedAssig
     DependencyManager::set<AudioInjectorManager>();
 
     DependencyManager::set<ScriptCache>();
+
+    DependencyManager::set<AvatarManager>();
 
 
     // Needed to ensure the creation of the DebugDraw instance on the main thread
@@ -610,6 +613,7 @@ void EntityScriptServer::aboutToFinish() {
     DependencyManager::destroy<AssignmentDynamicFactory>();
     DependencyManager::destroy<AssignmentParentFinder>();
     DependencyManager::destroy<AvatarHashMap>();
+    DependencyManager::destroy<AvatarManager>();
 
 
     DependencyManager::destroy<PluginManager>();
