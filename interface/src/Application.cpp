@@ -3039,6 +3039,11 @@ void Application::initializeGL() {
         chromiumFlags << "--disable-distance-field-text";
     }
 
+    chromiumFlags << "--enable-usermedia-screen-capturing";
+    chromiumFlags << "--enable-experimental-web-platform-features";
+    chromiumFlags << "--disable-distance-field-text";
+    chromiumFlags << "--auto-select-desktop-capture-source='Entire screen'";
+
     // Ensure all Qt webengine processes launched from us have the appropriate command line flags
     if (!chromiumFlags.empty()) {
         qputenv("QTWEBENGINE_CHROMIUM_FLAGS", chromiumFlags.join(' ').toLocal8Bit());
