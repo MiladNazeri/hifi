@@ -16,10 +16,8 @@
     "url": "https://github.com/highfidelity/hifi/issues"
   },
   "homepage": "https://github.com/highfidelity/hifi#readme",
-  "dependencies": {
+  "devDependencies": {
     "electron": "^6.0.12",
-    "electron-log": "^3.0.8",
-    "electron-packager": "^14.0.6",
-    "express.js": "^1.0.0"
+    "electron-packager": "^14.0.6"
   }
 }

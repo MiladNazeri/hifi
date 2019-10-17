@@ -3,17 +3,17 @@
 const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
-const express = require("express");
-const expressApp = express();
+// const express = require("express");
+// const expressApp = express();
 
 const port = 5000
 
-expressApp.get('/', (req, res) => {
-    res.send('Hello World!')
-    createWindow();
-})
+// expressApp.get('/', (req, res) => {
+//     res.send('Hello World!')
+//     createWindow();
+// })
 
-expressApp.listen(port, () => console.log(`Example app listening on port ${port}!`))
+// expressApp.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
 /*
 unsure
@@ -65,18 +65,18 @@ LogWindow.prototype = {
 const httpStatusPort = 60332;
 
 */
-global.log = require('electron-log');
+// global.log = require('electron-log');
 
 // print out uncaught exceptions in the console
-process.on('uncaughtException', function(err) {
-    log.error(err);
-    log.error(err.stack);
-});
+// process.on('uncaughtException', function(err) {
+//     log.error(err);
+//     log.error(err.stack);
+// });
 
 const gotTheLock = app.requestSingleInstanceLock()
 
 if (!gotTheLock) {
-  log.warn("Another instance of the screenshare is already running - this instance will quit.");
+//   log.warn("Another instance of the screenshare is already running - this instance will quit.");
   app.exit(0);
   return;
 }

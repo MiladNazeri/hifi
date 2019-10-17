@@ -9,7 +9,8 @@ var options = {
     platform: "win32",
     CompanyName: "High Fidelity, Inc.",
     FileDescription: "High Fidelity Screenshare",
-    OriginalFilename: "screenshare.exe"
+    OriginalFilename: "screenshare.exe",
+    ignore: "electron-packager|README.md|CMakeLists.txt|packager.js|.gitignore"
 };
 
 

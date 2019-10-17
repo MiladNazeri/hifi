@@ -32,11 +32,16 @@ function addSource(source) {
   refresh();
 }
 
+var chromeID;
 function showSources() {
   desktopCapturer.getSources({ types:['window', 'screen'] }, function(error, sources) {
+    console.log(JSON.stringify(sources, null, 4));
     for (let source of sources) {
       console.log("Name: " + source.name);
       addSource(source);
+      if (source.name.indexOf("Google Chrome") > -1){
+        chromeID = source.id;
+      }
     }
   });
 }
@@ -44,7 +49,7 @@ function showSources() {
 function toggle() {
   console.log("toggle picked")
   if (!desktopSharing) {
-    document.querySelector('button').innerHTML = "Stop Screenshare";
+    document.getElementById('screenshare').innerHTML = "Stop Screenshare";
     var id = ($('select').val()).replace(/window|screen/g, function(match) { return match + ":"; });
     onAccessApproved(id);
   } else {
@@ -53,8 +58,7 @@ function toggle() {
     if (localStream)
       localStream.getTracks()[0].stop();
     localStream = null;
-
-    document.querySelector('button').innerHTML = "Start Screenshare";
+    document.getElementById('screenshare').innerHTML = "Start Screenshare";
     stopTokBoxPublisher();
     $('select').empty();
     showSources();
@@ -105,10 +109,6 @@ $(document).ready(function() {
   refresh();
 });
 
-document.querySelector('button').addEventListener('click', function(e) {
-  toggle();
-});
-
 
 
 /* global OT API_KEY TOKEN SESSION_ID SAMPLE_SERVER_BASE_URL */
@@ -156,25 +156,27 @@ function handleError(error) {
     });
   }
   
-  var publisherVideo = document.createElement("video");
-  publisherVideo.id = "publisherVideo";
-
+  var publisher = document.createElement("div");
   function startTokboxPublisher(stream){
     console.log("publisher pushed")
     var publisherOptions = {
       videoSource: stream.getVideoTracks()[0],
-      audioSource: null,
+      audioSource: stream.getAudioTracks()[0],
       insertMode: 'append',
       width: 1280,
       height: 720
     };
 
-    publisher = OT.initPublisher('publisherVideo', publisherOptions, function(error){
+    publisher = OT.initPublisher(publisher, publisherOptions, function(error){
       if (error) {
         console.log("ERROR: " + error);
       } else {
         session.publish(publisher, function(error) {
           console.log("ERROR FROM Session.publish: " + error);
+          Array.prototype.slice.call(document.querySelectorAll('audio')).forEach(function(audio) {
+            console.log(JSON.stringify(audio));
+            // audio.muted = true;
+        });
         })
       }
     });
