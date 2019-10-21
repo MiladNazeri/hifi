@@ -1,5 +1,4 @@
 #include "ScreenshareScriptingInterface.h"
-#include <iostream>
 
 ScreenshareScriptingInterface::ScreenshareScriptingInterface(QObject* parent){};
 
