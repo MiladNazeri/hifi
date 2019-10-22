@@ -9,11 +9,24 @@ ScreenshareScriptingInterface::ScreenshareScriptingInterface(){};
 void ScreenshareScriptingInterface::startScreenshare(QString displayName, QString userName, QString token, QString sessionID, Qstring apiKey) {
     if (QThread::currentThread() != thread()) {
         // I added this because it said I can't start a process on a different thread 
-        QMetaObject::invokeMethod(this, "startScreenshare");
+        QMetaObject::invokeMethod(
+            this, "startScreenshare", 
+            Q_ARG(QString, displayName),
+            Q_ARG(QString, userName),
+            Q_ARG(QString, token),
+            Q_ARG(QString, sessionID),
+            Q_ARG(QString, apiKey),
+        );
         return;
     }
 
     qDebug() << "\n\n TESTING SCREENSHARE OPEN \n\n" + SCREENSHARE_APPLICATION;
+
+    if (!displayName || !userName || !token || !sessionID || !apiKey) {
+        qDebug() << "Screenshare can't launch without connection info";
+        return;
+    }
+
     QStringList arguments;
     arguments << "--userName=" + userName;
     arguments << "--displayName=" + displayName; 
