@@ -17,9 +17,6 @@ link_hifi_libraries(
   material-networking model-networking ktx shaders
 )
 
-add_subdirectory("${CMAKE_SOURCE_DIR}/interface/src/avatar")
-## target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/interface/src/avatar")
-
 add_dependencies(${TARGET_NAME} oven)
 
 if (WIN32)
