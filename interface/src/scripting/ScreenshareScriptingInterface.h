@@ -4,14 +4,13 @@
 #include <QObject>
 #include <DependencyManager.h>
 
-class ScreenshareScriptingInterface : public QObject, public Dependency{
-	Q_OBJECT
-    SINGLETON_DEPENDENCY
+class ScreenshareScriptingInterface : public QObject, public Dependency {
+    Q_OBJECT
 public:
-	ScreenshareScriptingInterface(QObject* parent = NULL);
-    const QString SCREENSHARE_APPLICATION{ "" };
+	ScreenshareScriptingInterface();
+    const QString SCREENSHARE_APPLICATION{ "file:///C:/hifi/hifi/screenshare/screenshare-win32-x64/screenshare.exe" };
 
-	Q_INVOKABLE void startScreenshare();
+	Q_INVOKABLE void startScreenshare(QString displayName, QString userName, QString token, QString sessionID, Qstring apiKey);
 };
 
 #endif // hifi_ScreenshareScriptingInterface_h
