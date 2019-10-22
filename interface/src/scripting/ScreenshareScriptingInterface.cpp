@@ -6,7 +6,7 @@
 
 ScreenshareScriptingInterface::ScreenshareScriptingInterface(){};
 
-void ScreenshareScriptingInterface::startScreenshare() {
+void ScreenshareScriptingInterface::startScreenshare(QString displayName, QString userName, QString token, QString sessionID, Qstring apiKey) {
     if (QThread::currentThread() != thread()) {
         // I added this because it said I can't start a process on a different thread 
         QMetaObject::invokeMethod(this, "startScreenshare");
@@ -15,7 +15,12 @@ void ScreenshareScriptingInterface::startScreenshare() {
 
     qDebug() << "\n\n TESTING SCREENSHARE OPEN \n\n" + SCREENSHARE_APPLICATION;
     QStringList arguments;
-    arguments << "test";
+    arguments << "--userName=" + userName;
+    arguments << "--displayName=" + displayName; 
+    arguments << "--token=" + token; 
+    arguments << "--apiKey=" + apiKey; 
+    arguments << "--sessionID=" + sessionID; 
+
     /*
     // attempt 1
     QProcess* process = new QProcess(this);

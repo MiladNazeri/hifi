@@ -10,7 +10,7 @@ public:
 	ScreenshareScriptingInterface();
     const QString SCREENSHARE_APPLICATION{ "file:///C:/hifi/hifi/screenshare/screenshare-win32-x64/screenshare.exe" };
 
-	Q_INVOKABLE void startScreenshare();
+	Q_INVOKABLE void startScreenshare(QString displayName, QString userName, QString token, QString sessionID, Qstring apiKey);
 };
 
 #endif // hifi_ScreenshareScriptingInterface_h

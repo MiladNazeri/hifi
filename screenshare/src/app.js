@@ -12,59 +12,80 @@
 // limitations under the License.
 // Author: Dongseong Hwang (dongseong.hwang@intel.com)
 
-const {desktopCapturer} = require('electron');
+const {desktopCapturer, ipcRenderer} = require('electron');
 
 let desktopSharing = false;
 let localStream;
 
-function refresh() {
-  $('select').imagepicker({
-    hide_select : true
-  });
-}
-
-function addSource(source) {
-  $('select').append($('<option>', {
-    value: source.id.replace(":", ""),
-    text: source.name
-  }));
-  $('select option[value="' + source.id.replace(":", "") + '"]').attr('data-img-src', source.thumbnail.toDataURL());
-  refresh();
-}
-
-var chromeID;
-function showSources() {
-  desktopCapturer.getSources({ types:['window', 'screen'] }, function(error, sources) {
-    console.log(JSON.stringify(sources, null, 4));
-    for (let source of sources) {
-      console.log("Name: " + source.name);
-      addSource(source);
-      if (source.name.indexOf("Google Chrome") > -1){
-        chromeID = source.id;
-      }
-    }
-  });
-}
-
-function toggle() {
-  console.log("toggle picked")
-  if (!desktopSharing) {
-    document.getElementById('screenshare').innerHTML = "Stop Screenshare";
-    var id = ($('select').val()).replace(/window|screen/g, function(match) { return match + ":"; });
-    onAccessApproved(id);
-  } else {
-    desktopSharing = false;
-
-    if (localStream)
-      localStream.getTracks()[0].stop();
-    localStream = null;
-    document.getElementById('screenshare').innerHTML = "Start Screenshare";
-    stopTokBoxPublisher();
-    $('select').empty();
-    showSources();
+// Screenshare UI
+  function addSource(source) {
+    var stringText = `<option value="${source.id.replace(":", "")}" text="${source.name}">${source.name}</option>`;
+    $('select').append($(stringText));
+    $(`select option[value="${source.id.replace(":", "")}"]`).attr('data-img-src', source.thumbnail.toDataURL());
     refresh();
   }
+
+
+  var chromeID;
+  function showSources() {
+    desktopCapturer.getSources({ types:['window', 'screen'] }, function(error, sources) {
+      for (let source of sources) {
+        console.log("Name: " + source.name);
+        addSource(source);
+        if (source.name.indexOf("Google Chrome") > -1){
+          chromeID = source.id;
+        }
+      }
+    });
+  }
+
+
+  function toggle() {
+    console.log("toggle picked")
+    if (!desktopSharing) {
+      document.getElementById('screenshare').innerHTML = "Stop Screenshare";
+      var id = ($('select').val()).replace(/window|screen/g, function(match) { return match + ":"; });
+      onAccessApproved(id);
+    } else {
+      desktopSharing = false;
+
+      if (localStream)
+        localStream.getTracks()[0].stop();
+      localStream = null;
+      document.getElementById('screenshare').innerHTML = "Start Screenshare";
+      stopTokBoxPublisher();
+      $('select').empty();
+      showSources();
+      refresh();
+    }
+  }
+
+
+  function refresh() {
+    $('select').imagepicker({
+      hide_select : true,
+      show_label: true
+    });
+  }
+
+
+  $(document).ready(function() {
+    showSources();
+    refresh();
+  });
+  
+
+function gotStream(stream) {
+  localStream = stream;
+  startTokboxPublisher(localStream);
+
+  stream.onended = function() {
+    if (desktopSharing) {
+      toggle();
+    }
+  };
 }
+
 
 function onAccessApproved(desktop_id) {
   if (!desktop_id) {
@@ -85,41 +106,18 @@ function onAccessApproved(desktop_id) {
         maxHeight: 720
       }
     }
-  }, gotStream, getUserMediaError);
-
-  function gotStream(stream) {
-    localStream = stream;
-    startTokboxPublisher(localStream);
-
-    // document.querySelector('video').src = URL.createObjectURL(stream);
-    stream.onended = function() {
-      if (desktopSharing) {
-        toggle();
-      }
-    };
-  }
-
-  function getUserMediaError(e) {
-    console.log('getUserMediaError: ' + JSON.stringify(e, null, '---'));
-  }
+  }, gotStream, handleError);
 }
 
-$(document).ready(function() {
-  showSources();
-  refresh();
-});
-
-
-
-/* global OT API_KEY TOKEN SESSION_ID SAMPLE_SERVER_BASE_URL */
 
 // Helpers
-function handleError(error) {
+  function handleError(error) {
     if (error) {
       console.error(error);
     }
   }
 
+  
 // Tokbox
   var apiKey;
   var sessionId;
@@ -155,6 +153,7 @@ function handleError(error) {
       }
     });
   }
+
   
   var publisher = document.createElement("div");
   function startTokboxPublisher(stream){
@@ -166,45 +165,53 @@ function handleError(error) {
       width: 1280,
       height: 720
     };
-
     publisher = OT.initPublisher(publisher, publisherOptions, function(error){
       if (error) {
         console.log("ERROR: " + error);
       } else {
         session.publish(publisher, function(error) {
           console.log("ERROR FROM Session.publish: " + error);
-          Array.prototype.slice.call(document.querySelectorAll('audio')).forEach(function(audio) {
-            console.log(JSON.stringify(audio));
-            // audio.muted = true;
-        });
         })
       }
     });
   }
+
 
   function stopTokBoxPublisher(){
     console.log("TOK BOX STOPED!")
     publisher.destroy();
   }
 
+  
 // main
-  function startup(){
-    console.log("\n\n IN STARTUP \n\n") 
-    // Make an Ajax request to get the OpenTok API key, session ID, and token from the server
-    fetch("https://hifi-test.herokuapp.com" + '/room/test')
-    .then(function(res) {
-      return res.json();
-    })
-    .then(function fetchJson(json) {
-      apiKey = json.apiKey;
-      sessionId = json.sessionId;
-      token = json.token;
+ipcRenderer.on('connectionInfo', function(event, message){
+  console.log("event", event);
+  console.log("MESSAGE FROM MAIN", message);
+  var connectionInfo = JSON.parse(message); 
+  // apiKey = connectionInfo.apiKey;
+  // sessionId = connectionInfo.sessionId;
+  // token = connectionInfo.token;
+  // initializeTokboxSession();
+})
 
-      initializeTokboxSession();
-    })
-    .catch(function catchErr(error) {
-      handleError(error);
-      alert('Failed to get opentok sessionId and token. Make sure you have updated the config.js file.');
-    });
-  }
-  startup();
+// main
+function startup(){
+  console.log("\n\n IN STARTUP \n\n") 
+  // Make an Ajax request to get the OpenTok API key, session ID, and token from the server
+  fetch("https://hifi-test.herokuapp.com" + '/room/test')
+  .then(function(res) {
+    return res.json();
+  })
+  .then(function fetchJson(json) {
+    apiKey = json.apiKey;
+    sessionId = json.sessionId;
+    token = json.token;
+
+    initializeTokboxSession();
+  })
+  .catch(function catchErr(error) {
+    handleError(error);
+    alert('Failed to get opentok sessionId and token. Make sure you have updated the config.js file.');
+  });
+}
+startup();
