@@ -893,7 +893,7 @@ bool setupEssentials(int& argc, char** argv, bool runningMarkerExisted) {
 #ifdef HAVE_DDE
     DependencyManager::set<DdeFaceTracker>();
 #endif
-    DependencyManager::set<ScreenshareScriptingInterface()>;
+    DependencyManager::set<ScreenshareScriptingInterface>();
     DependencyManager::set<AudioClient>();
     DependencyManager::set<AudioScope>();
     DependencyManager::set<DeferredLightingEffect>();
