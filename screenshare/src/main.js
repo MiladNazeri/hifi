@@ -23,22 +23,27 @@ if (!gotTheLock) {
 
 var window;
 function createWindow(){
-    const zoomFactor = 0.8;
+    const zoomFactor = 1.0;
     window = new BrowserWindow({
-        width: 1920 * zoomFactor,
-        height: 1080 * zoomFactor,
+        backgroundColor: "#000000",
+        width: 1280 * zoomFactor,
+        height: 720 * zoomFactor,
         center: true,
         frame: true,
         useContentSize: true,
         zoomFactor: zoomFactor,
         resizable: false,
+        alwaysOnTop: true, // TRY
         webPreferences: {
             nodeIntegration: true
         }
     });
     window.loadURL('file://' + __dirname + '/index.html');
     window.setMenu(null);
-    window.show();
+
+    window.once('ready-to-show', () => {
+        window.show();        
+    })
 }
 
 // This method will be called when Electron has finished

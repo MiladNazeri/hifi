@@ -6,7 +6,7 @@
 
 ScreenshareScriptingInterface::ScreenshareScriptingInterface(){};
 
-void ScreenshareScriptingInterface::startScreenshare(QString displayName, QString userName, QString token, QString sessionID, Qstring apiKey) {
+void ScreenshareScriptingInterface::startScreenshare(QString displayName, QString userName, QString token, QString sessionID, QString apiKey) {
     if (QThread::currentThread() != thread()) {
         // I added this because it said I can't start a process on a different thread 
         QMetaObject::invokeMethod(
@@ -15,14 +15,14 @@ void ScreenshareScriptingInterface::startScreenshare(QString displayName, QStrin
             Q_ARG(QString, userName),
             Q_ARG(QString, token),
             Q_ARG(QString, sessionID),
-            Q_ARG(QString, apiKey),
+            Q_ARG(QString, apiKey)
         );
         return;
     }
 
     qDebug() << "\n\n TESTING SCREENSHARE OPEN \n\n" + SCREENSHARE_APPLICATION;
 
-    if (!displayName || !userName || !token || !sessionID || !apiKey) {
+    if (!displayName.isEmpty() || !userName.isEmpty() || !token.isEmpty() || !sessionID.isEmpty() || !apiKey.isEmpty()) {
         qDebug() << "Screenshare can't launch without connection info";
         return;
     }
@@ -34,11 +34,10 @@ void ScreenshareScriptingInterface::startScreenshare(QString displayName, QStrin
     arguments << "--apiKey=" + apiKey; 
     arguments << "--sessionID=" + sessionID; 
 
-    /*
     // attempt 1
     QProcess* process = new QProcess(this);
     // I tried both of these
-    process->start("C:\hifi\hifi\screenshare\screenshare-win32-x64\screenshare.exe", arguments);
+    //process->start("C:\hifi\hifi\screenshare\screenshare-win32-x64\screenshare.exe", arguments);
     process->start(SCREENSHARE_APPLICATION, arguments);
 
     // None of these print either
@@ -47,7 +46,6 @@ void ScreenshareScriptingInterface::startScreenshare(QString displayName, QStrin
     connect(process, &QProcess::started, [=]() { qDebug() << "PROCESS STARTED"; });
     connect(process, &QProcess::stateChanged,
             [=](QProcess::ProcessState newState) { qDebug() << "process state" << newState; });
-    */
 
 
     /*

@@ -19,5 +19,8 @@
   "devDependencies": {
     "electron": "^6.0.12",
     "electron-packager": "^14.0.6"
+  },
+  "dependencies": {
+    "yargs": "^14.2.0"
   }
 }
