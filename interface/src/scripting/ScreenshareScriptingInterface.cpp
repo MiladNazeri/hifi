@@ -3,6 +3,7 @@
 #include <QThread>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QCoreApplication>
 
 ScreenshareScriptingInterface::ScreenshareScriptingInterface(){};
 
@@ -21,6 +22,7 @@ void ScreenshareScriptingInterface::startScreenshare(QString displayName, QStrin
     }
 
     qDebug() << "\n\n TESTING SCREENSHARE OPEN \n\n" + SCREENSHARE_APPLICATION;
+    qDebug() << QCoreApplication::applicationFilePath;
 
     if (!displayName.isEmpty() || !userName.isEmpty() || !token.isEmpty() || !sessionID.isEmpty() || !apiKey.isEmpty()) {
         qDebug() << "Screenshare can't launch without connection info";
@@ -34,6 +36,7 @@ void ScreenshareScriptingInterface::startScreenshare(QString displayName, QStrin
     arguments << "--apiKey=" + apiKey; 
     arguments << "--sessionID=" + sessionID; 
 
+    /*
     // attempt 1
     QProcess* process = new QProcess(this);
     // I tried both of these
@@ -46,7 +49,7 @@ void ScreenshareScriptingInterface::startScreenshare(QString displayName, QStrin
     connect(process, &QProcess::started, [=]() { qDebug() << "PROCESS STARTED"; });
     connect(process, &QProcess::stateChanged,
             [=](QProcess::ProcessState newState) { qDebug() << "process state" << newState; });
-
+    */
 
     /*
     // attempt 2
@@ -60,4 +63,18 @@ void ScreenshareScriptingInterface::startScreenshare(QString displayName, QStrin
     // QDesktopServices::openUrl(QUrl(SCREENSHARE_APPLICATION));
     
     // attempt 4
+    QProcess* process = new QProcess(this);
+    process->setProcessChannelMode(QProcess::ForwardedChannels);
+    process->start(SCREENSHARE_APPLICATION, arguments);
+
+    connect(process, &QProcess::errorOccurred,
+        [=](QProcess::ProcessError error) { qDebug() << "error enum val = " << error << endl; });
+    connect(process, &QProcess::started, [=]() { qDebug() << "PROCESS STARTED"; });
+    connect(process, &QProcess::stateChanged,
+            [=](QProcess::ProcessState newState) { qDebug() << "process state" << newState; });
+    connect(process, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this,
+            [=](int exitCode, QProcess::ExitStatus exitStatus) {
+                qDebug() << "\n\n\n EXITED!" << exitCode << " " << exitStatus;
+    });
+
 };

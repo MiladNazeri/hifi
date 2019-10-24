@@ -36,13 +36,15 @@ function createWindow(){
         alwaysOnTop: true, // TRY
         webPreferences: {
             nodeIntegration: true
-        }
+        },
+        devTools: true
     });
     window.loadURL('file://' + __dirname + '/index.html');
     window.setMenu(null);
 
     window.once('ready-to-show', () => {
-        window.show();        
+        window.show();       
+        window.webContents.openDevTools()
     })
 }
 

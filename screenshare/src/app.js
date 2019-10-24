@@ -49,9 +49,10 @@ let localStream;
     } else {
       desktopSharing = false;
 
-      if (localStream)
+      if (localStream) {
         localStream.getTracks()[0].stop();
-      localStream = null;
+        localStream = null;
+      }
       document.getElementById('screenshare').innerHTML = "Start Screenshare";
       stopTokBoxPublisher();
       $('select').empty();
@@ -129,18 +130,7 @@ function onAccessApproved(desktop_id) {
   function initializeTokboxSession() {
     console.log("\n\n\n\n #$######\n TRYING TO START SESSION")
     session = OT.initSession(apiKey, sessionId);
-    console.log(JSON.stringify(session));
     // Subscribe to a newly created stream
-    session.on('streamCreated', function streamCreated(event) {
-      if(event.stream.id === sessionId)
-      console.log("EVENT FROM STREAM CREATED", JSON.stringify(event))
-      var subscriberOptions = {
-        insertMode: 'append',
-        width: '100%',
-        height: '100%'
-      };
-      session.subscribe(event.stream, 'subscriber', subscriberOptions, handleError);
-    });
 
     session.on('sessionDisconnected', function sessionDisconnected(event) {
       console.log('You were disconnected from the session.', event.reason);
@@ -155,8 +145,9 @@ function onAccessApproved(desktop_id) {
   }
 
   
-  var publisher = document.createElement("div");
+  var publisher; 
   function startTokboxPublisher(stream){
+    publisher = document.createElement("div");
     console.log("publisher pushed")
     var publisherOptions = {
       videoSource: stream.getVideoTracks()[0],
@@ -170,7 +161,11 @@ function onAccessApproved(desktop_id) {
         console.log("ERROR: " + error);
       } else {
         session.publish(publisher, function(error) {
-          console.log("ERROR FROM Session.publish: " + error);
+          if (error) {
+            console.log("ERROR FROM Session.publish: " + error);
+            return;
+          }
+          console.log("MADE IT TO PUBLISH")
         })
       }
     });
