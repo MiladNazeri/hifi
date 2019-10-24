@@ -8,7 +8,10 @@ class ScreenshareScriptingInterface : public QObject, public Dependency {
     Q_OBJECT
 public:
 	ScreenshareScriptingInterface();
-    const QString SCREENSHARE_APPLICATION{ "file:///C:/hifi/hifi/screenshare/screenshare-win32-x64/screenshare.exe" };
+    // This is a note for Milad:
+    // The value of this `SCREENSHARE_EXE_PATH` string will have to be changed based on the operating system we're using.
+    // The binary should probably be stored in a path like this one.
+    const QString SCREENSHARE_EXE_PATH{ "D:\\Code\\HiFi\\interface\\resources\\screenshare\\bin\\win32-x64\\screenshare.exe" };
 
 	Q_INVOKABLE void startScreenshare(QString displayName, QString userName, QString token, QString sessionID, QString apiKey);
 };

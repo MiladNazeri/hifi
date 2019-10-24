@@ -1,15 +1,33 @@
+//
+//  ScreenshareScriptingInterface.cpp
+//  interface/src/scripting/
+//
+//  Created by Milad Nazeri on 2019-10-23.
+//  Copyright 2019 High Fidelity, Inc.
+//
+//  Distributed under the Apache License, Version 2.0.
+//  See the accompanying file LICENSE or http://www.apache.org/licenses/LICENSE-2.0.html
+//
+
 #include "ScreenshareScriptingInterface.h"
 #include <QProcess>
 #include <QThread>
 #include <QDesktopServices>
 #include <QUrl>
 #include <QCoreApplication>
+#include "SharedUtil.h"
 
-ScreenshareScriptingInterface::ScreenshareScriptingInterface(){};
+#ifdef Q_OS_WIN
+void* PROCESS_GROUP = createProcessGroup();
+#endif
+
+ScreenshareScriptingInterface::ScreenshareScriptingInterface() {
+
+};
 
 void ScreenshareScriptingInterface::startScreenshare(QString displayName, QString userName, QString token, QString sessionID, QString apiKey) {
     if (QThread::currentThread() != thread()) {
-        // I added this because it said I can't start a process on a different thread 
+        // We must start a new QProcess from the main thread.
         QMetaObject::invokeMethod(
             this, "startScreenshare", 
             Q_ARG(QString, displayName),
@@ -21,11 +39,10 @@ void ScreenshareScriptingInterface::startScreenshare(QString displayName, QStrin
         return;
     }
 
-    qDebug() << "\n\n TESTING SCREENSHARE OPEN \n\n" + SCREENSHARE_APPLICATION;
-    qDebug() << QCoreApplication::applicationFilePath;
+    qDebug() << "ZRF: Inside startScreenshare(). `SCREENSHARE_EXE_PATH`:" << SCREENSHARE_EXE_PATH;
 
-    if (!displayName.isEmpty() || !userName.isEmpty() || !token.isEmpty() || !sessionID.isEmpty() || !apiKey.isEmpty()) {
-        qDebug() << "Screenshare can't launch without connection info";
+    if (displayName.isEmpty() || userName.isEmpty() || token.isEmpty() || sessionID.isEmpty() || apiKey.isEmpty()) {
+        qDebug() << "Screenshare executable can't launch without connection info.";
         return;
     }
 
@@ -36,45 +53,24 @@ void ScreenshareScriptingInterface::startScreenshare(QString displayName, QStrin
     arguments << "--apiKey=" + apiKey; 
     arguments << "--sessionID=" + sessionID; 
 
-    /*
-    // attempt 1
-    QProcess* process = new QProcess(this);
-    // I tried both of these
-    //process->start("C:\hifi\hifi\screenshare\screenshare-win32-x64\screenshare.exe", arguments);
-    process->start(SCREENSHARE_APPLICATION, arguments);
+    QProcess* electronProcess = new QProcess(this);
 
-    // None of these print either
-    connect(process, &QProcess::errorOccurred,
-            [=](QProcess::ProcessError error) { qDebug() << "error enum val = " << error << endl; });
-    connect(process, &QProcess::started, [=]() { qDebug() << "PROCESS STARTED"; });
-    connect(process, &QProcess::stateChanged,
-            [=](QProcess::ProcessState newState) { qDebug() << "process state" << newState; });
-    */
+    electronProcess->setProcessChannelMode(QProcess::ForwardedChannels);
 
-    /*
-    // attempt 2
-    // Another method I saw, but also doesn't do anything
-    QProcess::startDetached(SCREENSHARE_APPLICATION, arguments);
-    */
-    
+    connect(electronProcess, &QProcess::errorOccurred,
+        [=](QProcess::ProcessError error) { qDebug() << "ZRF QProcess::errorOccurred. `error`:" << error; });
+    connect(electronProcess, &QProcess::started, [=]() { qDebug() << "ZRF QProcess::started"; });
+    connect(electronProcess, &QProcess::stateChanged,
+        [=](QProcess::ProcessState newState) { qDebug() << "ZRF QProcess::stateChanged. `newState`:" << newState; });
+    connect(electronProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+        [=](int exitCode, QProcess::ExitStatus exitStatus) {
+            qDebug() << "ZRF QProcess::finished. `exitCode`:" << exitCode << "`exitStatus`:" << exitStatus;
+        });
 
-    // attempt 3, this one worked well, but with a popup asking if I am sure I want to open this url
-    // I don't think we can pass arguments in this way either so I'd say a no go.  
-    // QDesktopServices::openUrl(QUrl(SCREENSHARE_APPLICATION));
-    
-    // attempt 4
-    QProcess* process = new QProcess(this);
-    process->setProcessChannelMode(QProcess::ForwardedChannels);
-    process->start(SCREENSHARE_APPLICATION, arguments);
-
-    connect(process, &QProcess::errorOccurred,
-        [=](QProcess::ProcessError error) { qDebug() << "error enum val = " << error << endl; });
-    connect(process, &QProcess::started, [=]() { qDebug() << "PROCESS STARTED"; });
-    connect(process, &QProcess::stateChanged,
-            [=](QProcess::ProcessState newState) { qDebug() << "process state" << newState; });
-    connect(process, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this,
-            [=](int exitCode, QProcess::ExitStatus exitStatus) {
-                qDebug() << "\n\n\n EXITED!" << exitCode << " " << exitStatus;
-    });
-
+    // Note for Milad:
+    // We'll have to have equivalent lines of code for MacOS.
+#ifdef Q_OS_WIN
+    electronProcess->start(SCREENSHARE_EXE_PATH, arguments);
+    addProcessToGroup(PROCESS_GROUP, electronProcess->processId());
+#endif
 };
