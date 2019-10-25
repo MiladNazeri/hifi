@@ -15,11 +15,7 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include <QCoreApplication>
-#include "SharedUtil.h"
 
-#ifdef Q_OS_WIN
-void* PROCESS_GROUP = createProcessGroup();
-#endif
 
 ScreenshareScriptingInterface::ScreenshareScriptingInterface() {
 
@@ -55,8 +51,6 @@ void ScreenshareScriptingInterface::startScreenshare(QString displayName, QStrin
 
     QProcess* electronProcess = new QProcess(this);
 
-    electronProcess->setProcessChannelMode(QProcess::ForwardedChannels);
-
     connect(electronProcess, &QProcess::errorOccurred,
         [=](QProcess::ProcessError error) { qDebug() << "ZRF QProcess::errorOccurred. `error`:" << error; });
     connect(electronProcess, &QProcess::started, [=]() { qDebug() << "ZRF QProcess::started"; });
@@ -71,6 +65,5 @@ void ScreenshareScriptingInterface::startScreenshare(QString displayName, QStrin
     // We'll have to have equivalent lines of code for MacOS.
 #ifdef Q_OS_WIN
     electronProcess->start(SCREENSHARE_EXE_PATH, arguments);
-    addProcessToGroup(PROCESS_GROUP, electronProcess->processId());
 #endif
 };

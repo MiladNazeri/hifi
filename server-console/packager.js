@@ -8,6 +8,7 @@ if (osType == "Darwin" || osType == "Linux") {
     console.log("OS TYPE IS WINDOWS NT1")
     platform = "win32"
 }
+console.log("\n\n\nplatform", platform);
 
 var argv = require('yargs').argv;
 
