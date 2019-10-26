@@ -19,7 +19,7 @@ var options = {
     name: "server-console",
     version: "0.37.5",
     overwrite: true,
-    prune: true,
+    prune: false,
     arch: "x64",
     platform: platform,
     icon: "resources/" + iconName,

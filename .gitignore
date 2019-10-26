@@ -84,6 +84,7 @@ TAGS
 # ignore node files for the console
 node_modules
 npm-debug.log
+!/server-console/node_modules
 
 # ignore qmlc files generated from qml as cache
 *.qmlc
