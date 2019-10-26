@@ -14,7 +14,7 @@ add_custom_target(${TARGET_NAME}-npm-install
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 add_custom_target(${TARGET_NAME}-mv-debug
-  COMMAND mv debug node_modules/debug
+  COMMAND mv mvDebug node_modules/debug
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   DEPENDS ${TARGET_NAME}-npm-install
 )
