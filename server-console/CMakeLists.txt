@@ -8,6 +8,7 @@ if (CLIENT_ONLY)
   set(CLIENT_ONLY_OPTION "--client_only")
 endif()
 
+set(ENV{DEBUG} "electron-packager")
 # add a target that will package the console
 add_custom_target(${TARGET_NAME}-npm-install
   COMMAND npm install

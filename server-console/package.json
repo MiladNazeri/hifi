@@ -8,8 +8,6 @@
     ""
   ],
   "devDependencies": {
-    "electron": "^3.0.0",
-    "electron-packager": "^12.1.2"
   },
   "repository": {
     "type": "git",
@@ -23,6 +21,8 @@
     "packager": "node packager.js"
   },
   "dependencies": {
+    "electron": "^3.0.0",
+    "electron-packager": "^12.1.2",
     "always-tail": "^0.2.0",
     "cheerio": "^0.22.0",
     "debug": "^4.0.1",
