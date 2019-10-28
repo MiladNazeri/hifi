@@ -74,11 +74,12 @@ h3 {
 
 .box {
   background-color: orange;
-  height: 200px;
-  width: 350px;
+  height: 165px;
+  width: 265px;
   display: inline-block;
   margin-left: 20px;
   margin-bottom: 40px;
+  margin-top: 20px;
 }
 
 .heading {
@@ -90,7 +91,7 @@ h3 {
 
 .image {
   background-color: blue;
-  width: 350px;
+  width: 265px;
   height: 165px;
 }
 
