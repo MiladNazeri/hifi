@@ -85,7 +85,7 @@ TAGS
 node_modules
 npm-debug.log
 
-screenshare/*.*
+screenshare/*
 
 # ignore qmlc files generated from qml as cache
 *.qmlc
