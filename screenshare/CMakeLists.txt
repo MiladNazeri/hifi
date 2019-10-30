@@ -9,8 +9,8 @@ add_custom_target(${TARGET_NAME}
 	DEPENDS ${TARGET_NAME}-npm-install
 )
 
-set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "Screenshare")
-set_target_properties(${TARGET_NAME}--npm-install PROPERTIES FOLDER "hidden/Screenshare")
+set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "screenshare")
+set_target_properties(${TARGET_NAME}-npm-install PROPERTIES FOLDER "hidden/screenshare")
 
 if (WIN32)
 	set(PACKAGED_SCREENSHARE_FOLDER "screenshare-win32-x64")
