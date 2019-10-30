@@ -13,7 +13,7 @@ public:
     // The binary should probably be stored in a path like this one.
     const QString SCREENSHARE_EXE_PATH{ "C:\\hifi\\hiFi\\screenshare\\screenshare-win32-x64\\screenshare.exe" };
 
-	Q_INVOKABLE void startScreenshare(QString displayName, QString userName, QString token, QString sessionID, QString apiKey);
+	Q_INVOKABLE void startScreenshare(QString displayName, QString userName, QString token, QString sessionID, QString apiKey, QString fileLocation);
 };
 
 #endif // hifi_ScreenshareScriptingInterface_h

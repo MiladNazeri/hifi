@@ -21,7 +21,7 @@ ScreenshareScriptingInterface::ScreenshareScriptingInterface() {
 
 };
 
-void ScreenshareScriptingInterface::startScreenshare(QString displayName, QString userName, QString token, QString sessionID, QString apiKey) {
+void ScreenshareScriptingInterface::startScreenshare(QString displayName, QString userName, QString token, QString sessionID, QString apiKey, QString fileLocation) {
     if (QThread::currentThread() != thread()) {
         // We must start a new QProcess from the main thread.
         QMetaObject::invokeMethod(
@@ -30,7 +30,8 @@ void ScreenshareScriptingInterface::startScreenshare(QString displayName, QStrin
             Q_ARG(QString, userName),
             Q_ARG(QString, token),
             Q_ARG(QString, sessionID),
-            Q_ARG(QString, apiKey)
+            Q_ARG(QString, apiKey), 
+            Q_ARG(QString, fileLocation)
         );
         return;
     }
@@ -64,6 +65,6 @@ void ScreenshareScriptingInterface::startScreenshare(QString displayName, QStrin
     // Note for Milad:
     // We'll have to have equivalent lines of code for MacOS.
 #ifdef Q_OS_WIN
-    electronProcess->start(SCREENSHARE_EXE_PATH, arguments);
+    electronProcess->start(fileLocation, arguments);
 #endif
 };
