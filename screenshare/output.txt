@@ -1,3 +1,0 @@
-package.json:    "url": "git+https://github.com/highfidelity/hifi.git"
-package.json:    "url": "https://github.com/highfidelity/hifi/issues"
-package.json:  "homepage": "https://github.com/highfidelity/hifi#readme",
