@@ -5,10 +5,9 @@ var platform = null;
 if (osType == "Darwin" || osType == "Linux") {
     platform = osType.toLowerCase();
 } else if (osType == "Windows_NT") {
-    console.log("OS TYPE IS WINDOWS NT1")
     platform = "win32"
 }
-console.log("\n\n\nplatform", platform);
+
 
 var argv = require('yargs').argv;
 
@@ -37,8 +36,7 @@ if (osType == "Darwin") {
     options["app-bundle-id"] = "com.highfidelity.server-console" + (argv.production ? "" : "-dev")
     options["name"] = SHORT_NAME
 } else if (osType == "Windows_NT") {
-    console.log("OS TYPE IS WINDOWS NT")
-    options["version-string"] = {
+        options["version-string"] = {
         CompanyName: "High Fidelity, Inc.",
         FileDescription: FULL_NAME,
         ProductName: FULL_NAME,
