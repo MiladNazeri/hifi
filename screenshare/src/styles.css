@@ -53,10 +53,14 @@ h3 {
 }
 
 .screen_label {
-  font-size: 24px;
+  max-width: 220px;
+  font-size: 18px;
   line-height: 24px;
   margin-left: 15px;
   color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .circle {
@@ -70,6 +74,17 @@ h3 {
 .circle:hover{
   background-color: yellow;
   cursor: pointer;
+}
+
+.button_confirmation {
+  margin: 4px;
+  cursor: pointer;
+  width: 250px;
+}
+
+.button_confirmation:hover {
+  border: 2px solid white;
+  width: 250px;
 }
 
 .box {
@@ -91,6 +106,13 @@ h3 {
 
 .image {
   background-color: blue;
+  width: 265px;
+  height: 165px;
+  max-height: 165px;
+  max-width: 265px;
+}
+
+img {
   width: 265px;
   height: 165px;
 }

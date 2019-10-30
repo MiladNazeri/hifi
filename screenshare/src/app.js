@@ -5,14 +5,26 @@
         }
     }
 
+/* SOURCE EXAMPLE
+    [23584:1028/110448.237:INFO:CONSOLE(67)] "{
+    "id": "screen:0:0",
+    "name": "Screen 1",
+    "thumbnail": {},
+    "display_id": "2528732444",
+    "appIcon": null
+    }"
+*/
+
+var isBrowser = false;
+const imageWidth = 265;
+const imageHeight = 165;
+
 var images = 10;
-var imageWidth = 265;
-var imageHeight = 165;
 var testImage = "resources/test.jpg";
-function MakeSource(newTitle, newImage, newFakeID, newWidth, newHeight){
-    this.title = newTitle;
-    this.image = newImage;
-    this.fakeID = newFakeID;
+function MakeSource(name, thumbnail, id, newWidth, newHeight){
+    this.name = name;
+    this.thumbnail = thumbnail;
+    this.id = id;
     this.width = newWidth;
     this.height = newHeight;
 }
@@ -20,25 +32,32 @@ function MakeSource(newTitle, newImage, newFakeID, newWidth, newHeight){
 let testSources = [];
 
 for (let index = 0; index < images; index++) {
-    let test = new MakeSource("title" + index, testImage, index, imageWidth, imageHeight);
+    let test = new MakeSource("REALLY LONG LONG title" + index, testImage, index, imageWidth, imageHeight);
     testSources.push(test);
 }
-console.log(testSources);
 
-let currentScreensharePick = "";
-function findPick(pick){
-    currentScreensharePick = pick;
+// if (!isBrowser) {
+    const electron = require('electron');
+// }
+
+let currentScreensharePickID = "";
+function screensharePicked(id){
+    currentScreensharePickID = id;
+    // console.log(currentScreensharePickID);
+    document.getElementById("share_pick").innerHTML = "";
+    addSource(sourceMap[id], "share_pick");
     togglePage();
 }
 
 
-confirmedID = "";
+
 function screenConfirmed(isConfirmed){
     if (isConfirmed === true){
-    
+        onAccessApproved(currentScreensharePickID);
     }
     togglePage();
 }
+
 
 let currentPage = "mainPage";
 function togglePage(){
@@ -54,105 +73,70 @@ function togglePage(){
 }
 
 // UI
-    // TODO:
-    function addSource(source) {
-        console.log(source);
-        let title = source.title; 
-        console
-        let imageToTry = source.image
-        console.log(imageToTry)
-        let fakeID = source.fakeID;
-        let width = source.width;
-        let height = source.height;
+    function addSource(source, type) {
         let sourceBody = document.createElement('div')
+        let thumbnail = isBrowser ? source.thumbnail : source.thumbnail.toDataURL();
         sourceBody.classList.add("box")
+        let circle = `<div class="circle" onclick="screensharePicked('${source.id}')"}></div>`
         sourceBody.innerHTML = `
-        <div class="heading">
-            <div class="circle" onClick="togglePage()"></div>
-            <span class="screen_label">${title}</span>
-        </div>
-        <div class="image">
-            <img src="${imageToTry}" width="${width}" height="${height}" data-id="${fakeID}"></img>
-        </div>
+            <div class="heading">
+                ${type === "selects" ? circle : ""}
+                <span class="screen_label">${source.name}</span>
+            </div>
+            <div class="image">
+                <img src="${thumbnail}"></img>
+            </div>
         `
-        document.getElementById("selects").appendChild(sourceBody);
-        console.log(selects);
-    }
-
-/* BROWSER
-        function showSources() {
-        document.getElementById("selects").innerHTML="";
-        for (let source of testSources) {
-            addSource(source)
-        }
-*/
-    // /* ELECTRON
-    let chromeID;
-    const electron = require('electron');
-    const {desktopCapturer} = electon;
-    function showSources() {
-        document.getElementById("selects").innerHTML="";
-        desktopCapturer.getSources({ types:['window', 'screen'] }, (error, sources) => {
-            if (error) {
-                console.log("Error getting sources", error);
-            }
-
-            for (let source of sources) { 
-                console.log("Name: " + source);
-                addSource(source);
-                if (source.name.indexOf("Google Chrome") > -1){
-                    chromeID = source.id;
-                }
-
-
-        });
-    }
-    // */
-    function showSources() {
-        document.getElementById("selects").innerHTML="";
-        // console.log(sources);
-        for (let source of testSources) {
-            addSource(source)
-        }
-        // desktopCapturer.getSources({ types:['window', 'screen'] }, (error, sources) => {
-            // if (error) {
-                // console.log("Error getting sources", error);
-            // }
-
-            // for (let source of testSources) { 
-                // console.log("Name: " + source.name);
-                // addSource(source);
-                // if (source.name.indexOf("Google Chrome") > -1){
-                //     chromeID = source.id;
-                // }
-
-
-        // });
-    }
-
-    let desktopSharing = false;
-    let localStream;
-    function toggle() {
-        console.log("toggle picked")
-        if (!desktopSharing) {
-            document.getElementById('screenshare').innerHTML = "Stop Screenshare";
-            // TODO:
-            // var id = ($('select').val()).replace(/window|screen/g, function(match) { return match + ":"; });
-            onAccessApproved(id);
+        // console.log(sourceBody.innerHTML);
+        if (type === "selects") {
+            document.getElementById("selects").appendChild(sourceBody);
         } else {
-            desktopSharing = false;
-
-            if (localStream) {
-                localStream.getTracks()[0].stop();
-                localStream = null;
-            }
-
-            document.getElementById('screenshare').innerHTML = "Start Screenshare";
-            stopTokBoxPublisher();
-            // showSources();
+            document.getElementById("share_pick").appendChild(sourceBody);
         }
     }
 
+
+    let sourceMap = {};
+    function showSources() {
+        document.getElementById("selects").innerHTML="";
+        if (isBrowser) {
+            for (let source of testSources) {
+                sourceMap[source.id] = source;
+                addSource(source, "selects");
+            }
+        } else {
+            electron.desktopCapturer.getSources({ 
+                types:['window', 'screen'],
+                thumbnailSize: {
+                    width: imageWidth,
+                    height: imageHeight
+                }
+            }, (error, sources) => {
+                if (error) {
+                    console.log("Error getting sources", error);
+                }
+    
+                for (let source of sources) {
+                    sourceMap[source.id] = source;
+                    addSource(source, "selects");
+                }
+            });
+        }
+    }
+
+
+    let localStream;
+    function stopSharing(){
+        desktopSharing = false;
+
+        if (localStream) {
+            localStream.getTracks()[0].stop();
+            localStream = null;
+        }
+
+        document.getElementById('screenshare').style.display = "none";
+        stopTokBoxPublisher();
+    }
   
     function gotStream(stream) {
         localStream = stream;
@@ -171,7 +155,8 @@ function togglePage(){
             console.log('Desktop Capture access rejected.');
             return;
         }
-
+        showSources();
+        document.getElementById('screenshare').style.visibility = "block";
         desktopSharing = true;
         console.log("Desktop sharing started.. desktop_id:" + desktop_id);
         navigator.webkitGetUserMedia({
@@ -272,7 +257,7 @@ function togglePage(){
                 sessionId = json.sessionId;
                 token = json.token;
 
-                // initializeTokboxSession();
+                initializeTokboxSession();
             })
             .catch(function catchErr(error) {
                 handleError(error);
@@ -282,8 +267,8 @@ function togglePage(){
 
     }
 
-    // startup();
     document.addEventListener("DOMContentLoaded", () => {
+        startup();
         showSources();
 
         // showSources();
