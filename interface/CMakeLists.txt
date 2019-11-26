@@ -315,6 +315,7 @@ if (APPLE)
     COMPONENT ${CLIENT_COMPONENT}
   )
 
+
   set(SCRIPTS_INSTALL_DIR "${INTERFACE_INSTALL_APP_PATH}/Contents/Resources")
   set(RESOURCES_DEV_DIR "$<TARGET_FILE_DIR:${TARGET_NAME}>/../Resources")
 
@@ -347,6 +348,7 @@ if (APPLE)
     COMMAND "${CMAKE_COMMAND}" -E copy_if_different
       "${PROJECT_SOURCE_DIR}/resources/serverless/redirect.json"
       "${RESOURCES_DEV_DIR}/serverless/redirect.json"
+    COMMAND "${CMAKE_COMMAND}" -E create_symlink "${SCREENSHARE_INSTALL_DIR}/Contents/MacOS/hifi-screenshare" "${INTERFACE_INSTALL_APP_PATH}/Contents/MacOS/hifi-screenshare"
   )
 
   # call the fixup_interface macro to add required bundling commands for installation
