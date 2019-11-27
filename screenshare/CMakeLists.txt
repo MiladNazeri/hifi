@@ -30,8 +30,6 @@ elseif (APPLE)
 		USE_SOURCE_PERMISSIONS
 		DESTINATION ${SCREENSHARE_INSTALL_DIR}
 	)
-     add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
-        COMMAND "${CMAKE_COMMAND}" -E create_symlink "${HIFI_SCREENSHARE_DIR}/Contents/MacOS/hifi-screenshare" "${MacOS}/hifi-screenshare")
 endif()
 
 # DO build the Screenshare Electron app when building the `ALL_BUILD` target.

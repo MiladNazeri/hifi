@@ -350,6 +350,7 @@ if (APPLE)
     COMMAND "${CMAKE_COMMAND}" -E copy_if_different
       "${PROJECT_SOURCE_DIR}/resources/serverless/redirect.json"
       "${RESOURCES_DEV_DIR}/serverless/redirect.json"
+     COMMAND "${CMAKE_COMMAND}" -E create_symlink "${HIFI_SCREENSHARE_DIR}/Contents/MacOS/hifi-screenshare" "${MacOS}/hifi-screenshare")
   )
 
   # call the fixup_interface macro to add required bundling commands for installation
