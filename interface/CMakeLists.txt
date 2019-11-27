@@ -318,6 +318,8 @@ if (APPLE)
 
   set(SCRIPTS_INSTALL_DIR "${INTERFACE_INSTALL_APP_PATH}/Contents/Resources")
   set(RESOURCES_DEV_DIR "$<TARGET_FILE_DIR:${TARGET_NAME}>/../Resources")
+  set(MacOS_DIR "$<TARGET_FILE_DIR:${TARGET_NAME}>/../MacOS")
+  set(HIFI_SCREENSHARE_DIR "$<TARGET_FILE_DIR:${TARGET_NAME}>/../../hifi-screenshare.app")
 
   add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
     # copy script files beside the executable
@@ -348,7 +350,6 @@ if (APPLE)
     COMMAND "${CMAKE_COMMAND}" -E copy_if_different
       "${PROJECT_SOURCE_DIR}/resources/serverless/redirect.json"
       "${RESOURCES_DEV_DIR}/serverless/redirect.json"
-    COMMAND "${CMAKE_COMMAND}" -E create_symlink "${SCREENSHARE_INSTALL_DIR}/hifi-screenshare.app/Contents/MacOS/hifi-screenshare" "${INTERFACE_INSTALL_APP_PATH}/Contents/MacOS/hifi-screenshare"
   )
 
   # call the fixup_interface macro to add required bundling commands for installation
